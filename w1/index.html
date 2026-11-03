@@ -1,0 +1,550 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{color-scheme:light;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Лавка Капитана у моря</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Oswald:wght@600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/friz.css">
+<link rel="stylesheet" href="shared/tex.css">
+<style>
+:root { color-scheme: dark; }
+/* Вариант по образцу 2.1 в морском стиле: закатный берег, парусник, капитанская латунь,
+   заголовки как на его превью (жёлто-оранжевые с толстой обводкой), чёрные шестиугольные таблички с золотом */
+:root {
+  --bg: #060a10; --sea: #0d1a2a; --sea-2: #132a42;
+  --brass-hi: #f6d58e; --brass: #c9973f; --brass-lo: #6e4a1a; --brass-dark: #241606;
+  --sun: #ff9a3a; --sun-2: #ffcf6a; --wave: #5aa8e6;
+  --yel: #ffe14a; --org: #ff9418;
+  --text: #e9e4d8; --muted: #98a0aa; --dim: #6a717a;
+  --rare: #4f9bff; --epic: #b46bff; --legendary: #ffa53a;
+  --dia: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Cpath d='M9 0L18 9 9 18 0 9z' fill='%23140c06'/%3E%3Cpath d='M9 2.2L15.8 9 9 15.8 2.2 9z' fill='%23f6d58e'/%3E%3Cpath d='M9 5L13 9 9 13 5 9z' fill='%236e4a1a'/%3E%3C/svg%3E");
+  --hex: polygon(18px 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 18px 100%, 0 50%);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; overflow-x: clip; }
+body { margin: 0; overflow-x: clip; background: var(--bg); color: var(--text); font: 15px/1.55 Rubik, system-ui, sans-serif; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button { font-family: inherit; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* надписи как на превью канала */
+.cap { font-family: Oswald, Impact, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .01em; line-height: .95;
+  background: linear-gradient(180deg, #fff6b0 0%, var(--yel) 40%, var(--org) 78%, #e2600a 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(2px 0 0 #2a1204) drop-shadow(-2px 0 0 #2a1204) drop-shadow(0 2px 0 #2a1204) drop-shadow(0 -2px 0 #2a1204) drop-shadow(0 5px 0 rgba(0,0,0,.85)); }
+.sticker { display: inline-block; font-family: Oswald, Impact, sans-serif; font-weight: 700; text-transform: uppercase; color: var(--yel);
+  text-shadow: 2px 0 #2a1204, -2px 0 #2a1204, 0 2px #2a1204, 0 -2px #2a1204, 2px 2px #2a1204, -2px -2px #2a1204, 2px -2px #2a1204, -2px 2px #2a1204, 0 4px 0 #000; }
+
+/* кнопка из игровой текстуры */
+.bbtn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 26px;
+  border: 14px solid transparent; border-image: url(img/btn_bronze.png) 30 fill / 14px stretch;
+  font: 17px/1 Friz, Georgia, serif; color: #f8e2b0; letter-spacing: .02em; text-shadow: 0 2px 0 #000; cursor: pointer; background: none; transition: filter .15s, transform .1s; }
+.bbtn:hover { filter: brightness(1.25); } .bbtn:active { transform: translateY(1px); }
+.bbtn.sm { min-height: 40px; padding: 0 14px; font-size: 14px; border-width: 10px; border-image-width: 10px; }
+.bbtn.sea { filter: hue-rotate(180deg) saturate(.9) brightness(1.05); color: #e6f3ff; }
+.bbtn.sea:hover { filter: hue-rotate(180deg) saturate(1) brightness(1.3); }
+.ghost { display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 22px; border: 1px solid rgba(246,213,142,.45); border-radius: 2px;
+  font: 16px Friz, serif; color: var(--brass-hi); background: rgba(6,10,16,.35); backdrop-filter: blur(3px); cursor: pointer; }
+.ghost:hover { background: rgba(201,151,63,.18); }
+.gpanel { border: 30px solid transparent; border-image: url(img/panel_frame.png) 70 fill / 30px stretch; }
+
+/* чёрная шестиугольная табличка с золотом, как «КАСТЫ СТРИМЫ ГАЙДЫ» на баннере канала */
+.hexplate { padding: 3px; clip-path: var(--hex); background: linear-gradient(180deg, #ffe7a3, var(--brass) 50%, #7a4e14); filter: drop-shadow(0 10px 14px rgba(0,0,0,.6)); }
+.hexplate > div { clip-path: var(--hex); padding: 14px 30px; text-align: center; background: var(--noise), radial-gradient(120% 140% at 50% 0%, #2a2a2e, #0b0b0d 70%);
+  box-shadow: inset 0 0 0 2px #0b0b0d, inset 0 0 0 3px rgba(246,213,142,.35); }
+.goldtxt { font-family: Friz, Georgia, serif; background: linear-gradient(180deg, #fff3c4, #f2c14e 50%, #b47a1a); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 2px 0 #000); }
+
+/* ---------- верхняя панель ---------- */
+.nav { position: fixed; inset: 0 0 auto 0; z-index: 40; transition: background .3s, box-shadow .3s; }
+.nav.solid { background: rgba(6,10,16,.88); backdrop-filter: blur(8px); box-shadow: 0 1px 0 rgba(201,151,63,.35); }
+.nav .wrap { display: flex; align-items: center; gap: 26px; height: 66px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand svg { filter: drop-shadow(0 3px 6px #000); }
+.brand b { font: 20px/1 Friz, serif; color: var(--brass-hi); text-shadow: 0 2px 0 #000; font-weight: 400; }
+.brand small { display: block; margin-top: 3px; font: 11px/1 Rubik, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.links { display: flex; gap: 22px; margin-left: 10px; }
+.links a { font: 15px Friz, serif; color: #d4ccbb; text-shadow: 0 1px 2px #000; position: relative; padding: 6px 0; }
+.links a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--brass-hi), transparent); opacity: 0; transition: opacity .2s; }
+.links a:hover { color: #fff; } .links a:hover::after { opacity: 1; }
+.nav .right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.bal { display: flex; align-items: center; gap: 6px; font: 16px Friz, serif; color: #fff; text-shadow: 0 1px 2px #000; }
+
+/* ---------- шапка-сцена у моря ---------- */
+.hero { position: relative; height: min(56.25vw, 94vh); min-height: 620px; overflow: hidden; }
+.hero .bg { position: absolute; inset: -2%; z-index: -3; overflow: hidden; background: #0b1420; animation: kb 40s ease-in-out infinite alternate; }
+@keyframes kb { to { transform: scale(1.06) translateY(-1%); } }
+/* сцена с пропорциями картинки, растянута как cover — корабль стоит на своём месте при любой ширине */
+.scene { position: absolute; left: var(--sx, 0); top: var(--sy, 0); width: var(--sw, 100%); height: var(--sh, 100%); background: url(img/wb_bg_coast2.jpg) center / 100% 100%; }
+.scene .ship { position: absolute; left: 75.5%; bottom: 46.5%; width: 20%; transform-origin: 50% 92%; animation: rock 7s ease-in-out infinite;
+  -webkit-mask: linear-gradient(180deg, #000 90%, transparent 99%); mask: linear-gradient(180deg, #000 90%, transparent 99%); filter: drop-shadow(0 0 18px rgba(255,150,60,.18)); }
+@keyframes rock { 0%, 100% { transform: rotate(-1.4deg) translateY(0); } 50% { transform: rotate(1.2deg) translateY(.6%); } }
+.scene .foam { position: absolute; left: 75%; bottom: 45.6%; width: 21%; height: 2.2%; border-radius: 50%; background: radial-gradient(closest-side, rgba(220,235,255,.55), rgba(220,235,255,0)); filter: blur(2px); animation: foam 7s ease-in-out infinite; }
+@keyframes foam { 50% { transform: scaleX(1.06) translateY(20%); opacity: .7; } }
+/* чайки: медленно пролетают, мягко взмахивая крыльями */
+.birds { position: absolute; inset: 70px 0 auto 0; height: 110px; z-index: -1; pointer-events: none; overflow: hidden; }
+.bird { position: absolute; left: 0; top: var(--y); width: var(--w, 34px); animation: fly var(--d) linear infinite; animation-delay: var(--dl, 0s); }
+.bird.rtl { animation-name: fly-rtl; } .bird.rtl svg { transform: scaleX(-1); }
+.bird i { display: block; animation: glide var(--g, 9s) ease-in-out infinite alternate; }
+.bird svg { display: block; width: 100%; overflow: visible; filter: drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
+@keyframes fly { from { transform: translateX(-80px); } to { transform: translateX(calc(100vw + 80px)); } }
+@keyframes fly-rtl { from { transform: translateX(calc(100vw + 80px)); } to { transform: translateX(-80px); } }
+@keyframes glide { 0% { transform: translateY(0); } 100% { transform: translateY(26px); } }
+.hero::before { content: ''; position: absolute; inset: 0; z-index: -2; background:
+  linear-gradient(90deg, rgba(4,8,14,.9) 0%, rgba(4,8,14,.55) 32%, rgba(4,8,14,0) 55%),
+  linear-gradient(0deg, var(--bg) 0%, rgba(6,10,16,0) 26%),
+  linear-gradient(180deg, rgba(4,8,14,.65) 0%, rgba(4,8,14,0) 18%); }
+.mist { position: absolute; left: -20%; right: -20%; bottom: 6%; height: 34%; z-index: -1; pointer-events: none; opacity: .55;
+  background: radial-gradient(40% 60% at 30% 60%, rgba(170,200,230,.2), transparent 70%), radial-gradient(35% 50% at 70% 70%, rgba(170,200,230,.16), transparent 70%);
+  filter: blur(14px); animation: drift 24s ease-in-out infinite alternate; }
+@keyframes drift { to { transform: translateX(8%); } }
+#spray { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+.hcopy { position: absolute; z-index: 3; left: max(20px, calc((100vw - 1240px) / 2 + 20px)); top: 50%; transform: translateY(-46%); max-width: 460px; }
+.kick { font: 13px/1 Friz, serif; letter-spacing: .2em; text-transform: uppercase; color: var(--brass); display: flex; align-items: center; gap: 12px; }
+.kick::before { content: ''; width: 34px; height: 1px; background: var(--brass); }
+.hcopy h1 { margin: 16px 0 14px; font-size: clamp(50px, 6vw, 86px); }
+.hcopy p { margin: 0 0 22px; font-size: 17px; color: #ddd6c6; text-shadow: 0 1px 3px #000; }
+.hcopy p b { color: var(--yel); font-weight: 500; }
+.ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+.weekly { display: flex; align-items: center; gap: 14px; margin-top: 30px; padding: 12px 16px 12px 12px; max-width: 440px;
+  background: linear-gradient(90deg, rgba(10,16,24,.88), rgba(10,16,24,.4)); border-left: 2px solid var(--yel); }
+.weekly img { width: 54px; height: 54px; border: 1px solid #000; box-shadow: 0 0 0 1px var(--legendary); }
+.weekly .t { font: 15px Friz, serif; color: #fff; } .weekly .s { font-size: 13px; color: var(--muted); }
+.weekly .s b { color: var(--yel); font-weight: 500; }
+.weekly .bbtn { margin-left: auto; }
+
+/* выбор капитана на пьедестале */
+.altar { position: absolute; z-index: 2; left: 50%; bottom: 31%; width: clamp(150px, 13vw, 200px); transform: translateX(-50%); }
+.altar .gcard { animation: hover 5s ease-in-out infinite; }
+@keyframes hover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.altar .rays { position: absolute; left: 50%; top: 42%; width: 260%; aspect-ratio: 1; transform: translate(-50%, -50%); z-index: -1;
+  background: url(img/fx_rays_gold.png) center / contain no-repeat; animation: spin 30s linear infinite; opacity: .75; }
+.altar .glow { position: absolute; left: 50%; bottom: -18%; width: 170%; height: 30%; transform: translateX(-50%); z-index: -1; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255,170,70,.55), transparent); filter: blur(6px); animation: pulse 3s ease-in-out infinite; }
+@keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes pulse { 50% { opacity: .55; } }
+.altar .top1 { position: absolute; z-index: 4; left: -30%; top: 5%; transform: rotate(-10deg); font-size: clamp(26px, 2.6vw, 38px); }
+.altar .tag { position: absolute; left: 50%; bottom: -60px; transform: translateX(-50%); white-space: nowrap; text-align: center; font: 20px Friz, serif; color: #fff; text-shadow: 0 2px 0 #000, 0 0 12px #000; }
+.altar .tag small { display: block; font: 14px Rubik, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--yel); }
+
+/* парус с монограммой на рее, канаты уходят за верх страницы */
+.banner { --s: .88; position: absolute; z-index: 2; top: 0; left: calc(50% + min(7.5vw, 120px) + 122px); width: 240px; height: 640px; margin-left: -120px; pointer-events: none;
+  transform-origin: 120px -120px; animation: pendulum 7s ease-in-out infinite; }
+@keyframes pendulum { 0%, 100% { transform: scale(var(--s)) rotate(-1deg); } 50% { transform: scale(var(--s)) rotate(1deg); } }
+.banner .ext { position: absolute; left: 50%; top: -280px; width: 9px; height: 170px; margin-left: -4.5px; background: url(img/wb_rope_long.png) center bottom / 9px auto repeat-y; }
+.banner .hanger { position: absolute; left: 0; top: -122px; width: 240px; z-index: 2; filter: drop-shadow(0 6px 8px rgba(0,0,0,.6)) drop-shadow(-2px 0 6px rgba(255,150,60,.2)); }
+.banner .sail { position: absolute; left: 32px; top: 204px; width: 176px; height: auto; z-index: 1;
+  filter: drop-shadow(0 16px 18px rgba(0,0,0,.6)) drop-shadow(-4px 0 10px rgba(255,150,60,.25)); animation: billow 4.8s ease-in-out infinite; transform-origin: 50% 0; }
+@keyframes billow { 0%, 100% { transform: skewX(-.8deg) scaleX(1); } 50% { transform: skewX(.8deg) scaleX(1.015); } }
+
+/* табличка с расписанием на канатах */
+.sched { position: absolute; z-index: 3; top: 66px; right: max(20px, 3.5vw); width: 310px; }
+.sched .rope { position: absolute; top: -66px; width: 12px; height: 112px; background: url(img/wb_rope_long.png) center bottom / 12px auto no-repeat; filter: drop-shadow(0 3px 3px #000); }
+.sched .rope.l { left: 46px; } .sched .rope.r { right: 46px; }
+.sched .hexplate { margin-top: 42px; }
+.sched .hexplate b { display: block; font: 19px/1.25 Friz, serif; font-weight: 400; }
+.sched .hexplate small { display: block; margin-top: 4px; font: 12px Rubik, sans-serif; color: #b9b2a2; }
+.scroll { position: absolute; z-index: 3; left: 50%; bottom: 18px; transform: translateX(-50%); font: 12px Rubik, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); text-align: center; }
+.scroll::after { content: ''; display: block; width: 1px; height: 28px; margin: 8px auto 0; background: linear-gradient(var(--brass), transparent); animation: down 2s ease-in-out infinite; }
+@keyframes down { 50% { transform: translateY(6px); opacity: .4; } }
+
+/* ---------- карточка скина в игровой рамке ---------- */
+.gcard { position: relative; aspect-ratio: var(--ar, .536); }
+.gcard .art { position: absolute; inset: 0; clip-path: var(--cp); }
+/* картинка с запасом шире окна рамки, а clip-path обрезает её по форме окна (контур окна + 4px под рамку).
+   Не маска-картинка: при открытии страницы из папки (file://) браузер маску не грузит и прячет всё */
+.gcard .art > i { position: absolute; inset: var(--in, 13% 7% 23.5% 7%); overflow: hidden; background: radial-gradient(circle at 50% 40%, var(--rc), #0b0f16 75%); }
+/* у иконок своя серая рамка ~7px из 320 — картинка чуть выше окна, чтобы эта рамка ушла под край */
+.gcard .art img { position: absolute; left: 0; top: -3.5%; width: 100%; height: 107%; object-fit: cover; }
+.gcard .art > i::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 26px rgba(0,0,0,.85); }
+.gcard .fr { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; filter: drop-shadow(0 10px 18px rgba(0,0,0,.7)); }
+.gcard[data-r="legendary"] { --in: 16% 10.5% 28% 10.5%; --rc: rgba(255,150,50,.6); }
+.gcard[data-r="legendary"] { --cp: polygon(41.9% 17.2%, 30.7% 18.5%, 24.7% 19.7%, 20.3% 21.0%, 17.8% 22.2%, 15.6% 23.5%, 14.2% 24.7%, 13.2% 26.0%, 12.6% 27.2%, 12.1% 28.5%, 12.1% 29.8%, 11.8% 31.0%, 11.8% 32.3%, 11.8% 33.5%, 11.8% 34.8%, 11.8% 36.0%, 11.8% 37.3%, 11.8% 38.5%, 11.8% 39.8%, 11.8% 41.1%, 11.8% 42.3%, 11.8% 43.6%, 11.8% 44.8%, 12.1% 46.1%, 11.8% 47.3%, 11.8% 48.6%, 11.5% 49.9%, 11.5% 51.1%, 11.8% 52.4%, 11.8% 53.6%, 11.5% 54.9%, 11.5% 56.1%, 11.5% 57.4%, 11.8% 58.6%, 11.8% 59.9%, 12.1% 61.2%, 12.6% 62.4%, 13.7% 63.7%, 15.1% 64.9%, 17.3% 66.2%, 20.5% 67.4%, 23.8% 68.7%, 27.4% 69.9%, 33.4% 71.4%, 66.0% 71.4%, 73.2% 69.9%, 76.4% 68.7%, 80.0% 67.4%, 83.0% 66.2%, 85.2% 64.9%, 86.3% 63.7%, 87.4% 62.4%, 87.9% 61.2%, 88.2% 59.9%, 87.7% 58.6%, 87.7% 57.4%, 87.7% 56.1%, 87.7% 54.9%, 87.7% 53.6%, 87.7% 52.4%, 88.2% 51.1%, 88.5% 49.9%, 88.5% 48.6%, 88.5% 47.3%, 88.5% 46.1%, 88.2% 44.8%, 88.2% 43.6%, 88.2% 42.3%, 88.2% 41.1%, 88.2% 39.8%, 88.2% 38.5%, 88.2% 37.3%, 88.2% 36.0%, 88.2% 34.8%, 88.2% 33.5%, 88.2% 32.3%, 88.2% 31.0%, 87.9% 29.8%, 87.7% 28.5%, 87.4% 27.2%, 86.8% 26.0%, 85.8% 24.7%, 84.4% 23.5%, 81.9% 22.2%, 79.5% 21.0%, 75.1% 19.7%, 69.3% 18.5%, 57.3% 17.2%); }
+.gcard[data-r="epic"] { --rc: rgba(180,107,255,.55); }
+.gcard[data-r="epic"] { --cp: polygon(36.1% 14.2%, 27.9% 15.7%, 21.9% 17.0%, 15.0% 18.4%, 11.5% 19.9%, 9.8% 21.2%, 9.3% 22.7%, 9.0% 24.2%, 9.0% 25.5%, 9.0% 26.9%, 9.0% 28.4%, 9.0% 29.7%, 9.0% 31.2%, 9.3% 32.7%, 9.3% 34.0%, 9.3% 35.4%, 9.3% 36.9%, 8.7% 38.2%, 8.7% 39.7%, 8.7% 41.1%, 8.7% 42.5%, 8.7% 43.9%, 8.7% 45.4%, 8.7% 46.9%, 8.7% 48.2%, 8.7% 49.6%, 8.7% 51.1%, 8.7% 52.4%, 8.7% 53.9%, 8.7% 55.3%, 8.7% 56.7%, 8.7% 58.1%, 8.7% 59.6%, 8.7% 60.9%, 9.0% 62.4%, 9.3% 63.8%, 9.8% 65.2%, 9.8% 66.6%, 10.9% 68.1%, 12.8% 69.4%, 16.1% 70.9%, 22.7% 72.3%, 31.7% 73.6%, 46.2% 75.3%, 55.7% 75.3%, 68.6% 73.6%, 78.7% 72.3%, 88.5% 70.9%, 86.9% 69.4%, 88.8% 68.1%, 90.7% 66.6%, 91.0% 65.2%, 91.5% 63.8%, 91.8% 62.4%, 91.8% 60.9%, 91.8% 59.6%, 91.5% 58.1%, 91.5% 56.7%, 91.8% 55.3%, 91.8% 53.9%, 91.8% 52.4%, 91.8% 51.1%, 91.8% 49.6%, 91.8% 48.2%, 91.3% 46.9%, 91.0% 45.4%, 91.0% 43.9%, 91.0% 42.5%, 91.5% 41.1%, 91.5% 39.7%, 91.5% 38.2%, 91.5% 36.9%, 91.3% 35.4%, 91.3% 34.0%, 91.3% 32.7%, 91.3% 31.2%, 91.3% 29.7%, 91.3% 28.4%, 91.3% 26.9%, 91.3% 25.5%, 91.0% 24.2%, 90.7% 22.7%, 90.4% 21.2%, 89.1% 19.9%, 86.1% 18.4%, 80.3% 17.0%, 73.8% 15.7%, 41.3% 14.2%); }
+.gcard[data-r="rare"] { --rc: rgba(79,155,255,.5); }
+.gcard[data-r="rare"] { --cp: polygon(38.0% 14.2%, 28.1% 15.7%, 22.4% 17.0%, 15.3% 18.4%, 11.5% 19.9%, 9.3% 21.4%, 8.5% 22.7%, 8.5% 24.2%, 8.5% 25.6%, 8.5% 27.1%, 8.5% 28.4%, 8.5% 29.9%, 8.5% 31.3%, 8.5% 32.8%, 8.5% 34.1%, 8.5% 35.6%, 8.5% 37.0%, 8.5% 38.5%, 8.5% 39.8%, 8.5% 41.3%, 8.5% 42.8%, 8.5% 44.2%, 8.5% 45.5%, 8.2% 47.0%, 8.2% 48.5%, 8.2% 49.9%, 8.2% 51.2%, 8.2% 52.7%, 8.2% 54.2%, 8.2% 55.6%, 8.2% 57.0%, 8.2% 58.4%, 8.2% 59.9%, 8.2% 61.3%, 8.2% 62.7%, 8.5% 64.1%, 8.7% 65.6%, 9.3% 67.1%, 10.1% 68.4%, 12.0% 69.8%, 15.6% 71.3%, 21.3% 72.8%, 30.3% 74.1%, 53.0% 75.7%, 53.3% 75.7%, 69.4% 74.1%, 79.8% 72.8%, 84.4% 71.3%, 87.2% 69.8%, 89.3% 68.4%, 90.4% 67.1%, 91.3% 65.6%, 91.5% 64.1%, 91.8% 62.7%, 91.8% 61.3%, 92.1% 59.9%, 91.5% 58.4%, 91.5% 57.0%, 92.1% 55.6%, 91.8% 54.2%, 91.8% 52.7%, 91.8% 51.2%, 91.8% 49.9%, 91.8% 48.5%, 91.8% 47.0%, 91.5% 45.5%, 91.5% 44.2%, 91.0% 42.8%, 91.5% 41.3%, 91.5% 39.8%, 91.5% 38.5%, 91.5% 37.0%, 91.5% 35.6%, 91.5% 34.1%, 91.3% 32.8%, 91.3% 31.3%, 91.3% 29.9%, 91.3% 28.4%, 91.3% 27.1%, 91.3% 25.6%, 91.3% 24.2%, 91.0% 22.7%, 90.4% 21.4%, 88.8% 19.9%, 85.5% 18.4%, 79.2% 17.0%, 71.9% 15.7%, 38.8% 14.2%); }
+
+/* ---------- секции ---------- */
+section { position: relative; padding: 70px 0 30px; scroll-margin-top: 70px; }
+.sh { text-align: center; margin-bottom: 38px; }
+.sh .kick { justify-content: center; }
+.sh .kick::after { content: ''; width: 34px; height: 1px; background: var(--brass); }
+.sh h2 { margin: 14px 0 10px; font-size: clamp(36px, 4.6vw, 56px); }
+.sh p { margin: 0 auto; max-width: 560px; color: var(--muted); }
+.sh p b { color: var(--yel); font-weight: 500; }
+.rule { height: 16px; max-width: 520px; margin: 14px auto 0; background: var(--dia) center / 16px no-repeat, linear-gradient(90deg, transparent, var(--brass-lo) 20%, var(--brass) 50%, var(--brass-lo) 80%, transparent) center / 100% 1px no-repeat; }
+
+/* трюм: роза ветров за карточками */
+.compass { position: absolute; left: 50%; top: 50%; width: min(1100px, 130vw); aspect-ratio: 1; transform: translate(-50%, -46%); z-index: 1; opacity: .16; pointer-events: none; animation: slowspin 160s linear infinite; }
+@keyframes slowspin { to { transform: translate(-50%, -46%) rotate(360deg); } }
+#crystals .wrap { position: relative; z-index: 2; }
+.packs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+.pack { position: relative; aspect-ratio: 420 / 589; background: url(img/card_rune.png) center / 100% 100%; display: flex; flex-direction: column; align-items: center; padding: 14% 10% 9%; text-align: center; transition: transform .2s, filter .2s; }
+.pack:hover { transform: translateY(-6px); filter: drop-shadow(0 0 18px rgba(90,168,230,.3)); }
+.pack .art { position: relative; width: 100%; flex: 1; display: grid; place-items: center; }
+.pack .art::before { content: ''; position: absolute; left: 50%; top: 50%; width: 150%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  background: url(img/fx_rays_blue.png) center / contain no-repeat; animation: spin 40s linear infinite; opacity: .5; }
+.pack .pile { position: relative; width: 100%; max-height: 120px; filter: drop-shadow(0 6px 10px rgba(0,0,0,.6)); }
+.pack .pack-chest { position: relative; width: 70%; border: 1px solid #000; box-shadow: 0 0 0 1px var(--brass), 0 0 24px rgba(127,214,255,.35); }
+.pack .amt { display: flex; align-items: center; gap: 6px; font: 26px/1 Friz, serif; color: #fff; text-shadow: 0 2px 0 #000; }
+.pack .nm { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.pack .bonus { min-height: 20px; font: 14px Friz, serif; color: var(--yel); }
+.pack .bbtn { margin-top: 8px; width: 100%; }
+.pack .ribbon { position: absolute; top: 4%; left: 50%; transform: translateX(-50%) rotate(-4deg); z-index: 2; font-size: 18px; white-space: nowrap; }
+
+/* арсенал */
+.filters { display: flex; justify-content: center; gap: 4px; margin: -14px 0 34px; flex-wrap: wrap; }
+.filters button { padding: 8px 18px; border: 0; background: none; cursor: pointer; font: 15px Friz, serif; color: var(--muted); border-bottom: 1px solid transparent; }
+.filters button:hover { color: var(--text); }
+.filters button.on { color: var(--brass-hi); border-color: var(--brass); text-shadow: 0 0 12px rgba(246,213,142,.4); }
+.skins { display: grid; grid-template-columns: repeat(5, 1fr); gap: 34px 22px; }
+.skin { position: relative; display: flex; flex-direction: column; text-align: center; cursor: pointer; }
+/* рамки не крупнее 176px: иконки 320×320 меньше растягиваются */
+.skin .gcard { width: min(100%, 176px); margin: 0 auto; transition: transform .25s; }
+.skin::before { content: ''; position: absolute; left: 50%; top: 38%; width: 120%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, var(--rc), transparent); opacity: 0; transition: opacity .3s; z-index: -1; }
+.skin:hover::before { opacity: .45; }
+.skin:hover .gcard { transform: translateY(-8px); }
+.skin .nm { margin-top: 12px; font: 17px/1.2 Friz, serif; color: #fff; }
+.skin .un { font-size: 13px; color: var(--muted); }
+.skin .rar { font: 11px Rubik, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--rc2); margin-top: 2px; }
+.skin .pr { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: auto; padding-top: 12px; }
+.skin .pr .bbtn { min-height: 48px; padding: 0 22px; font-size: 16px; border-width: 12px; border-image-width: 12px; }
+.skin .p { font: 19px Friz, serif; } .skin .p s { font-size: 13px; color: var(--dim); margin-left: 6px; }
+.skin .st { position: absolute; z-index: 3; top: 8%; right: -4%; transform: rotate(10deg); font-size: 20px; }
+
+/* набор капитана */
+.bundle { display: grid; grid-template-columns: 1.1fr 1fr; gap: 30px; align-items: center; padding: 20px 26px; position: relative; }
+.bundle::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(60% 80% at 25% 50%, rgba(90,168,230,.16), transparent 70%); }
+/* высота веера = карточка + подъём средней (18px) + опускание боковых (~9px), так поля сверху и снизу равны */
+.fan { --cw: 190px; position: relative; height: calc(var(--cw) / .536 + 27px); }
+.fan .gcard { position: absolute; left: 50%; bottom: 9px; width: var(--cw); transform-origin: 50% 110%; transition: transform .3s; }
+.fan .gcard:nth-child(1) { transform: translateX(-50%) rotate(-16deg) translateX(-30px); }
+.fan .gcard:nth-child(2) { transform: translateX(-50%) translateY(-18px); z-index: 2; }
+.fan .gcard:nth-child(3) { transform: translateX(-50%) rotate(16deg) translateX(30px); }
+.fan:hover .gcard:nth-child(1) { transform: translateX(-50%) rotate(-22deg) translateX(-50px); }
+.fan:hover .gcard:nth-child(3) { transform: translateX(-50%) rotate(22deg) translateX(50px); }
+.binfo .excl { display: inline-block; font: 12px Friz, serif; letter-spacing: .14em; text-transform: uppercase; color: var(--yel); border: 1px solid rgba(255,225,74,.4); padding: 4px 10px; }
+.binfo h3 { margin: 14px 0 8px; font-size: 46px; }
+.binfo ul { list-style: none; margin: 14px 0 18px; padding: 0; }
+.binfo li { padding: 6px 0 6px 28px; position: relative; color: #e4dccb; border-bottom: 1px solid rgba(201,151,63,.15); }
+.binfo li::before { content: ''; position: absolute; left: 0; top: 10px; width: 14px; height: 14px; background: var(--dia) center / contain no-repeat; }
+.binfo .price { font: 36px Friz, serif; color: #fff; } .binfo .price s { font-size: 18px; color: var(--dim); margin-left: 8px; }
+.binfo .row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.small-b { margin-top: 18px; display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px dashed rgba(201,151,63,.35); }
+.small-b img { width: 52px; height: 52px; border: 1px solid #000; box-shadow: 0 0 0 1px var(--epic); }
+.small-b .nb { position: relative; flex: 0 0 auto; margin-right: 30px; line-height: 0; }
+.small-b .nb svg { position: absolute; filter: drop-shadow(0 0 6px rgba(95,200,255,.7)) drop-shadow(0 2px 2px rgba(0,0,0,.8)); }
+.small-b .nb .g1 { right: -32px; bottom: -8px; transform: rotate(8deg); }
+.small-b .nb .g2 { right: -14px; bottom: 22px; transform: rotate(-14deg); }
+.small-b div { flex: 1; font-size: 14px; color: var(--muted); } .small-b b { display: block; font: 16px Friz, serif; color: #fff; font-weight: 400; }
+
+/* как купить: латунные медальоны */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; text-align: center; }
+.step .md { position: relative; width: 120px; height: 120px; margin: 0 auto 12px; display: grid; place-items: center; font: 36px/1 Friz, serif; color: #fff;
+  background: url(img/wb_medallion.png) center / contain no-repeat; filter: drop-shadow(0 10px 14px rgba(0,0,0,.6)); text-shadow: 0 0 2px #000, 0 0 5px #000, 0 2px 0 #000, 0 0 16px rgba(150,170,255,.9); }
+.step .md::after { content: ''; position: absolute; z-index: -1; inset: 30%; border-radius: 50%; background: radial-gradient(closest-side, rgba(130,150,255,.35), transparent); animation: pulse 4s ease-in-out infinite; pointer-events: none; }
+.step b { display: block; font: 19px Friz, serif; color: #fff; font-weight: 400; margin-bottom: 4px; }
+.step span { color: var(--muted); font-size: 14px; }
+
+footer { margin-top: 70px; border-top: 1px solid rgba(201,151,63,.25); background: #04070b; }
+footer .wrap { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 24px; padding: 34px 20px 18px; }
+footer h5 { margin: 0 0 10px; font: 15px Friz, serif; color: var(--brass-hi); font-weight: 400; }
+footer a, footer p { display: block; margin: 0 0 6px; font-size: 14px; color: var(--muted); }
+footer a:hover { color: #fff; }
+.legal { grid-column: 1 / -1; padding-top: 14px; border-top: 1px solid #12171e; font-size: 12px; color: var(--dim); }
+
+/* ---------- окно покупки ---------- */
+.co-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: radial-gradient(circle, rgba(6,14,24,.6), rgba(0,0,0,.88)); opacity: 0; transition: opacity .2s; }
+.co-overlay.open { opacity: 1; }
+.co-modal { position: relative; width: min(470px, 100%); max-height: calc(100vh - 32px); overflow: auto; padding: 6px 8px 10px; border: 34px solid transparent; border-image: url(img/panel_frame.png) 70 fill / 34px stretch; color: var(--text); scrollbar-width: thin; }
+.co-title { text-align: center; font: 24px Friz, serif; color: var(--brass-hi); text-shadow: 0 2px 0 #000; margin: 0 0 14px; }
+.co-close { position: absolute; right: 0; top: -4px; width: 34px; height: 34px; border: 0; background: none; color: var(--muted); font-size: 24px; cursor: pointer; }
+.co-item { display: flex; align-items: center; gap: 12px; padding: 10px; margin-bottom: 8px; background: rgba(0,0,0,.4); border-top: 1px solid rgba(201,151,63,.25); border-bottom: 1px solid rgba(201,151,63,.25); }
+.co-thumb { flex: 0 0 60px; height: 60px; display: grid; place-items: center; }
+.co-art { width: 60px; height: 60px; object-fit: cover; border: 1px solid #000; box-shadow: 0 0 0 1px var(--brass); }
+.co-meta { flex: 1; } .co-name { font: 17px Friz, serif; color: #fff; } .co-sub { font-size: 13px; color: var(--muted); }
+.co-price { font: 20px Friz, serif; color: var(--yel); white-space: nowrap; }
+.co-label { display: block; margin: 12px 0 6px; font: 14px Friz, serif; color: var(--brass-hi); }
+.co-input { display: block; width: 100%; margin-top: 6px; padding: 11px 12px; border: 1px solid #000; box-shadow: 0 0 0 1px var(--brass-lo); background: rgba(0,0,0,.55); color: #fff; font: 15px Rubik, sans-serif; }
+.co-input:focus { outline: none; box-shadow: 0 0 0 1px var(--brass-hi); }
+.co-hint { font-size: 12px; color: var(--dim); margin-top: 4px; }
+.co-row { display: flex; gap: 8px; } .co-row .co-input { margin: 0; }
+.co-apply { flex: 0 0 auto; padding: 0 14px; border: 1px solid #000; box-shadow: inset 0 0 0 1px var(--brass-lo); background: linear-gradient(#3a2614, #1a1008); color: var(--brass-hi); font: 14px Friz, serif; cursor: pointer; }
+.co-promo-msg { min-height: 18px; font-size: 13px; margin-top: 4px; color: #8fe08a; } .co-promo-msg[data-ok="0"] { color: #ff8a6a; }
+.co-pay { display: flex; gap: 8px; flex-wrap: wrap; }
+.co-method input { position: absolute; opacity: 0; }
+.co-method span { display: inline-block; padding: 9px 12px; cursor: pointer; font-size: 14px; color: var(--muted); background: rgba(0,0,0,.45); border: 1px solid rgba(201,151,63,.3); }
+.co-method input:checked + span { color: #fff; border-color: var(--brass-hi); box-shadow: 0 0 10px rgba(246,213,142,.25); }
+.co-method input:focus-visible + span { outline: 2px solid #fff; }
+.co-buy { width: 100%; min-height: 56px; margin-top: 18px; border: 14px solid transparent; border-image: url(img/btn_bronze.png) 30 fill / 14px stretch; background: none; cursor: pointer; font: 18px Friz, serif; color: #fff3dc; text-shadow: 0 2px 0 #000; }
+.co-fine { margin-top: 10px; text-align: center; font-size: 12px; color: var(--dim); }
+.toast { position: fixed; left: 50%; bottom: 28px; z-index: 200; transform: translate(-50%, 20px); opacity: 0; transition: .25s; pointer-events: none;
+  padding: 12px 22px; font: 15px Friz, serif; color: var(--brass-hi); background: #0b0b0d; clip-path: var(--hex); box-shadow: inset 0 0 0 1px var(--brass); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- адаптив ---------- */
+@media (max-width: 1180px) {
+  .packs { grid-template-columns: repeat(3, 1fr); max-width: 760px; margin: 0 auto; }
+  .skins { grid-template-columns: repeat(4, 1fr); }
+  .banner { --s: .66; left: calc(50% + min(7.5vw, 120px) + 92px); }
+  .altar { left: calc(50% + 34px); width: 140px; }
+  .sched { width: 220px; } .sched .rope.l { left: 34px; } .sched .rope.r { right: 34px; }
+  .sched .hexplate > div { padding: 10px 22px; } .sched .hexplate b { font-size: 15px; }
+}
+@media (max-width: 900px) {
+  .links, .bal { display: none; }
+  .hero { height: auto; min-height: 0; padding: 96px 0 0; display: flex; flex-direction: column; }
+  .hero .bg { background-position: 50% 100%; }
+  .hero::before { background: linear-gradient(180deg, rgba(4,8,14,.75) 0%, rgba(4,8,14,.35) 45%, rgba(4,8,14,.2) 70%, var(--bg) 100%); }
+  .hcopy { position: relative; left: auto; top: auto; transform: none; max-width: none; padding: 0 20px; text-align: center; order: 2; }
+  .kick { justify-content: center; }
+  .ctas { justify-content: center; }
+  .weekly { margin: 24px auto 0; text-align: left; }
+  .sched { position: relative; top: auto; right: auto; width: min(320px, calc(100% - 40px)); margin: 0 auto 16px; order: 1; }
+  .sched .rope { top: -96px; height: 122px; } .sched .hexplate { margin-top: 26px; }
+  .altar { position: relative; left: auto; bottom: auto; transform: none; margin: 46px auto 110px; order: 3; width: 170px; }
+  .birds { height: 70px; }
+  .altar .top1 { left: -38%; }
+  .banner { display: none; }
+  .scroll { display: none; }
+  .skins { grid-template-columns: repeat(3, 1fr); }
+  .bundle { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  footer .wrap { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .wrap { padding: 0 16px; }
+  .brand small { display: none; }
+  .packs { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .pack .amt { font-size: 22px; }
+  .skins { grid-template-columns: repeat(2, 1fr); gap: 26px 14px; }
+  .skin .pr { flex-direction: column; gap: 6px; }
+  .fan { --cw: 124px; }
+  .small-b { flex-wrap: wrap; } .small-b > div { order: 3; flex-basis: 100%; } .small-b .bbtn { margin-left: auto; }
+  .binfo h3 { font-size: 36px; }
+  .gpanel { border-width: 18px; border-image-width: 18px; }
+  .bundle { padding: 6px 4px; }
+  footer .wrap { grid-template-columns: 1fr; }
+}
+</style>
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" id="brand"></a>
+    <nav class="links" aria-label="Разделы"><a href="#crystals">Трюм</a><a href="#skins">Арсенал</a><a href="#bundles">Наборы</a><a href="#how">Как купить</a></nav>
+    <div class="right">
+      <span class="bal" id="bal"></span>
+      <button class="bbtn sm" data-login><span>Войти</span></button>
+    </div>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <div class="bg"><div class="scene" id="scene"><img class="ship" src="img/wb_ship_coast.png" alt=""><div class="foam"></div></div></div>
+  <div class="mist"></div>
+  <div class="birds" id="birds" aria-hidden="true"></div>
+  <canvas id="spray" aria-hidden="true"></canvas>
+
+  <div class="sched" aria-label="Расписание">
+    <div class="rope l"></div><div class="rope r"></div>
+    <div class="hexplate"><div><b class="goldtxt">Новые скины каждую пятницу в&nbsp;19:00</b><small>Следующая поставка через 1&nbsp;д 6&nbsp;ч</small></div></div>
+  </div>
+
+  <div class="hcopy">
+    <div class="kick">Legions Defense</div>
+    <h1 class="cap">Лавка<br>Капитана</h1>
+    <p>Кристаллы и скины для твоей армии. Промокод <b>КАПИТАН</b> даёт +10% кристаллов к любому набору.</p>
+    <div class="ctas">
+      <a class="bbtn" href="#crystals"><span>Купить кристаллы</span></a>
+      <a class="ghost" href="#skins">Все скины</a>
+    </div>
+    <div class="weekly" id="weekly"></div>
+  </div>
+
+  <div class="altar" id="altar"></div>
+
+  <div class="banner" aria-hidden="true">
+    <div class="ext"></div>
+    <img class="hanger" src="img/wb_hanger.png" alt="">
+    <img class="sail" src="img/wb_sail.png" alt="">
+  </div>
+  <div class="scroll">Листай</div>
+</div>
+
+<section id="crystals">
+  <svg class="compass" viewBox="0 0 400 400" aria-hidden="true">
+    <g fill="none" stroke="#f6d58e" stroke-width="1.2">
+      <circle cx="200" cy="200" r="190"/><circle cx="200" cy="200" r="176"/><circle cx="200" cy="200" r="120"/><circle cx="200" cy="200" r="60"/>
+      <path d="M200 10V390M10 200H390M66 66L334 334M334 66L66 334" stroke-opacity=".6"/>
+    </g>
+    <g fill="#f6d58e">
+      <path d="M200 24L214 186 200 200 186 186z"/><path d="M200 376L186 214 200 200 214 214z" fill-opacity=".5"/>
+      <path d="M376 200L214 214 200 200 214 186z" fill-opacity=".7"/><path d="M24 200L186 186 200 200 186 214z" fill-opacity=".7"/>
+      <path d="M318 82L210 190 200 200 206 184z" fill-opacity=".45"/><path d="M82 318L190 210 200 200 194 216z" fill-opacity=".45"/>
+      <path d="M318 318L210 210 200 200 216 206z" fill-opacity=".45"/><path d="M82 82L190 190 200 200 184 194z" fill-opacity=".45"/>
+    </g>
+    <g font-family="Friz, serif" font-size="22" fill="#f6d58e" text-anchor="middle"><text x="200" y="0" dy="-4">С</text><text x="200" y="420">Ю</text><text x="414" y="208">В</text><text x="-14" y="208">З</text></g>
+  </svg>
+  <div class="wrap">
+    <div class="sh"><div class="kick">Кристаллы</div><h2 class="cap">Трюм с сокровищами</h2><p>С промокодом <b>КАПИТАН</b> — ещё +10% сверху. Кристаллы приходят в игру сразу после оплаты.</p><div class="rule"></div></div>
+    <div class="packs" id="packs"></div>
+  </div>
+</section>
+
+<section id="skins">
+  <div class="wrap">
+    <div class="sh"><div class="kick">Скины</div><h2 class="cap">Абордажный арсенал</h2><p>Новые модели и эффекты для твоих юнитов. Видно всем на поле боя.</p><div class="rule"></div></div>
+    <div class="filters" role="tablist" aria-label="Редкость">
+      <button class="on" data-f="all">Все</button><button data-f="legendary">Легендарные</button><button data-f="epic">Эпические</button><button data-f="rare">Редкие</button>
+    </div>
+    <div class="skins" id="skinGrid"></div>
+  </div>
+</section>
+
+<section id="bundles">
+  <div class="wrap">
+    <div class="sh"><div class="kick">Наборы</div><h2 class="cap">Набор Капитана</h2><div class="rule"></div></div>
+    <div class="bundle gpanel" id="bundle"></div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sh"><div class="kick">Три шага</div><h2 class="cap">Как купить</h2><div class="rule"></div></div>
+    <div class="steps">
+      <div class="step"><div class="md">I</div><b>Узнай свой ID</b><span>В игре: Профиль → цифры под ником. Или войди через VK.</span></div>
+      <div class="step"><div class="md">II</div><b>Выбери товар</b><span>Кристаллы, скин или набор. Промокод КАПИТАН — +10% к кристаллам.</span></div>
+      <div class="step"><div class="md">III</div><b>Оплати</b><span>Картой или по СБП. Покупка придёт в игру сразу.</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><a class="brand" href="#top" id="brandFoot"></a><p style="margin-top:12px">Лавка Капитана × Legions Defense</p></div>
+    <div><h5>Покупателям</h5><a href="#how">Как купить</a><a href="#how">Где найти ID</a><a href="#">Возврат</a></div>
+    <div><h5>Связь</h5><a href="#">Сообщество</a><a href="#">Twitch</a><a href="#">Поддержка</a></div>
+    <div><h5>Оплата</h5><p>СБП</p><p>Карты банков РФ</p><p>ЮMoney</p></div>
+    <div class="legal">ИП Фамилия И. О. · ИНН 000000000000 · Оферта · Политика конфиденциальности · Макет: цены и тексты черновые</div>
+  </div>
+</footer>
+
+<script src="shared/data.js"></script>
+<script>
+// каталог тот же, что у другого варианта; меняем только то, что относится к каналу
+SHOP.promo.code = 'КАПИТАН';
+SHOP.bundles[0].name = 'Набор Капитана';
+SHOP.bundles[0].lines[2] = 'Стикер «ТОП-1» — только тут';
+</script>
+<script src="shared/common.js"></script>
+<script>
+const { rub, num, gem, packArt, toast } = UI;
+const S = SHOP;
+const FR = { legendary: 'frame_full_legendary', epic: 'frame_full_epic', rare: 'frame_full_rare' };
+const card = (img, r) => `<div class="gcard" data-r="${r}"><div class="art"><i><img src="img/${img}.png" alt="" loading="lazy"></i></div><img class="fr" src="img/${FR[r]}.png" alt=""></div>`;
+const sail = w => `<img src="img/wb_sail.png" width="${w}" height="${Math.round(w * 1.38)}" alt="">`;
+
+const brand = `${sail(26)}<span><b>Лавка Капитана</b><small>Legions Defense</small></span>`;
+document.getElementById('brand').innerHTML = brand;
+document.getElementById('brandFoot').innerHTML = brand;
+document.getElementById('bal').innerHTML = `${gem(18)} 0`;
+
+const w = S.skins[0];
+document.getElementById('altar').innerHTML = `<div class="rays"></div><div class="glow"></div>${card(w.img, w.rarity)}
+  <span class="sticker top1">ТОП-1</span>
+  <div class="tag"><small>Выбор капитана</small>${w.name}</div>`;
+document.getElementById('weekly').innerHTML = `<img src="img/${w.img}.png" alt=""><div><div class="t">${w.name}</div><div class="s"><b>ТОП-1 недели</b> · ещё 2 д 14 ч</div></div>
+  <button class="bbtn sm" data-buy="skin:${w.id}"><span>${rub(w.price)}</span></button>`;
+
+document.getElementById('packs').innerHTML = S.crystals.map(p => `
+  <article class="pack">
+    ${p.tag === 'hit' ? '<span class="sticker ribbon">Хит!</span>' : p.tag === 'best' ? '<span class="sticker ribbon">Выгодно!</span>' : ''}
+    <div class="art">${packArt(p, p.img ? '' : 'pile')}</div>
+    <div class="amt">${num(p.amount)} ${gem(20)}</div>
+    <div class="nm">${p.name}</div>
+    <div class="bonus">${p.bonus ? `+${num(p.bonus)} в подарок` : '&nbsp;'}</div>
+    <button class="bbtn sm" data-buy="crystals:${p.id}"><span>${rub(p.price)}</span></button>
+  </article>`).join('');
+
+const ST = { imba: 'Имба!', new: 'Новый!' };
+function renderSkins(f = 'all') {
+  document.getElementById('skinGrid').innerHTML = S.skins.filter(s => f === 'all' || s.rarity === f).map(s => {
+    const r = S.rarity[s.rarity];
+    const st = s.old ? `<span class="sticker st">−${Math.round((1 - s.price / s.old) * 100)}%</span>` : s.tag ? `<span class="sticker st">${ST[s.tag]}</span>` : '';
+    return `<article class="skin" style="--rc:${r.color}88;--rc2:${r.color}" data-buy="skin:${s.id}" tabindex="0">
+      ${st}${card(s.img, s.rarity)}
+      <div class="nm">${s.name}</div><div class="un">${s.unit}</div><div class="rar">${r.label}</div>
+      <div class="pr"><span class="p">${rub(s.price)}${s.old ? `<s>${rub(s.old)}</s>` : ''}</span><span class="bbtn sm"><span>Купить</span></span></div>
+    </article>`;
+  }).join('');
+}
+renderSkins();
+document.querySelectorAll('.filters button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.filters button').forEach(x => x.classList.toggle('on', x === b)); renderSkins(b.dataset.f);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('.skin')) e.target.click(); });
+
+const b = S.bundles[0], b2 = S.bundles[1];
+const RAR = img => S.skins.find(s => s.img === img).rarity;
+document.getElementById('bundle').innerHTML = `
+  <div class="fan">${b.items.map(i => card(i, RAR(i))).join('')}</div>
+  <div class="binfo">
+    <span class="excl">Только в этой лавке</span>
+    <h3 class="cap">${b.name}</h3>
+    <ul>${b.lines.map(l => `<li>${l}</li>`).join('')}</ul>
+    <div class="row"><span class="price">${rub(b.price)}<s>${rub(b.old)}</s></span><button class="bbtn" data-buy="bundle:${b.id}"><span>Забрать набор</span></button></div>
+    <div class="small-b"><span class="nb"><img src="img/${b2.items[0]}.png" alt="">${gem(30, 'g1')}${gem(21, 'g2')}</span><div><b>${b2.name}</b>${b2.lines.join(' + ')} · один раз на аккаунт</div>
+      <button class="bbtn sm" data-buy="bundle:${b2.id}"><span>${rub(b2.price)}</span></button></div>
+  </div>`;
+
+document.querySelectorAll('[data-login]').forEach(x => x.onclick = () => toast('Здесь будет вход через VK'));
+const nav = document.getElementById('nav');
+addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 40), { passive: true });
+
+// сцена шапки растягивается как cover (по ширине или высоте), корабль внутри неё
+(function scene() {
+  const bg = document.querySelector('.hero .bg'), sc = document.getElementById('scene'), AR = 1376 / 768;
+  const fit = () => {
+    const W = bg.clientWidth, H = bg.clientHeight, w = Math.max(W, H * AR), h = w / AR, py = innerWidth <= 900 ? 1 : .71;
+    Object.entries({ sx: (W - w) / 2, sy: (H - h) * py, sw: w, sh: h }).forEach(([k, v]) => sc.style.setProperty('--' + k, v + 'px'));
+  };
+  fit(); new ResizeObserver(fit).observe(bg);
+})();
+
+// чайки: крылья плавно машут, потом птица планирует
+(function birds() {
+  const L = 'M1 9C7 4 14 4 20 9C26 4 33 4 39 9', U = 'M3 2C8 4 15 6 20 9C25 6 32 4 37 2', D = 'M3 14C8 9 15 8 20 9C25 8 32 9 37 14';
+  const B = [{ y: '18%', w: 34, d: 70, dl: -12, f: 2.6 }, { y: '42%', w: 26, d: 88, dl: -50, f: 2.2, rtl: 1 }, { y: '4%', w: 22, d: 96, dl: -30, f: 2.4 },
+    { y: '30%', w: 30, d: 78, dl: -64, f: 2.8, rtl: 1 }, { y: '10%', w: 18, d: 110, dl: -85, f: 2.1 }];
+  document.getElementById('birds').innerHTML = B.map((b, i) => `<div class="bird${b.rtl ? ' rtl' : ''}" style="--y:${b.y};--w:${b.w}px;--d:${b.d}s;--dl:${b.dl}s;--g:${7 + i * 1.7}s"><i>
+    <svg viewBox="0 0 40 16"><path fill="none" stroke="#efe7da" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="${L}">
+      <animate attributeName="d" dur="${b.f}s" begin="-${i * .7}s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.14;.28;.42;.56;1"
+        keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1" values="${L};${U};${L};${D};${L};${L}"/></path>
+      <ellipse cx="20" cy="9.6" rx="2.6" ry="1.5" fill="#efe7da"/></svg></i></div>`).join('');
+})();
+
+// морские брызги и искры заката над водой
+(function spray() {
+  const cv = document.getElementById('spray'), cx = cv.getContext('2d');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let W, H, dpr = Math.min(devicePixelRatio || 1, 2), P = [];
+  const resize = () => { W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  const spawn = () => ({ x: Math.random() * W, y: H * (0.45 + Math.random() * 0.5), r: Math.random() * 1.6 + .4, vx: .25 + Math.random() * .55, vy: -(Math.random() * .25),
+    t: 0, life: 220 + Math.random() * 320, warm: Math.random() < .35 });
+  resize(); addEventListener('resize', resize);
+  for (let i = 0; i < 70; i++) { const p = spawn(); p.t = Math.random() * p.life; P.push(p); }
+  (function tick() {
+    cx.clearRect(0, 0, W, H);
+    for (const p of P) {
+      p.t++; p.x += p.vx; p.y += p.vy + Math.sin(p.t / 30) * .15;
+      const k = p.t / p.life, a = k < .15 ? k / .15 : 1 - (k - .15) / .85;
+      if (k >= 1 || p.x > W + 10) Object.assign(p, spawn(), { x: -10 + Math.random() * W * .3 });
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.283);
+      cx.fillStyle = p.warm ? `rgba(255,200,120,${Math.max(0, a) * .8})` : `rgba(210,235,255,${Math.max(0, a) * .7})`;
+      cx.shadowColor = p.warm ? 'rgba(255,160,60,.9)' : 'rgba(160,210,255,.9)'; cx.shadowBlur = 6; cx.fill();
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
+</script>
+</body></html>
