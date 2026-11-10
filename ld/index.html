@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Магазин Legions Defense</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/friz.css">
+<style>
+/* Официальный магазин игры: окно внутриигрового магазина, перенесённое в браузер —
+   тёмный камень, медные рамки и кнопки, золотые бейджи бонуса, кристаллы — главный цвет. Вся графика — из игры. */
+:root {
+  --bg: #0a0d14; --panel: #12161f; --line: rgba(214,189,143,.18);
+  --cream: #f2e6c4; --gold: #d6bd8f; --muted: #9a9da6; --ink: #2a1a10;
+  --copper: #d08a5a; --copper-hi: #f0b88a; --badge: #f2c14e; --ice: #72d6ff; --ember: #ff6a2b;
+  --display: Friz, 'Times New Roman', serif; --word: Cinzel, Friz, serif; --body: Rubik, system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; overflow-x: clip; }
+body { margin: 0; overflow-x: clip; background: var(--bg); color: var(--cream); font: 15px/1.55 var(--body); }
+img { max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+.wrap { width: min(1240px, 100%); margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+
+/* ---------- кнопки: медная плашка и тёмная плашка из игры ---------- */
+/* у Friz буквы и цифры сидят выше середины строки (~0.12em) — отступ сверху .24em ставит их по центру плашки */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: .24em 30px 0; cursor: pointer; white-space: nowrap;
+  font: 19px/1 var(--display); border: 12px solid transparent; background: none; transition: filter .15s, transform .1s; }
+.btn.copper { color: var(--ink); border-image: url(img/ld_btn_copper.png) 24 fill / 12px stretch; text-shadow: 0 1px 0 rgba(255,220,180,.45); }
+.btn.dark { color: var(--cream); border-image: url(img/ld_btn_dark.png) 30 fill / 12px stretch; }
+.btn:hover { filter: brightness(1.1); } .btn:active { transform: translateY(1px); }
+.btn.sm { min-height: 40px; padding: .24em 16px 0; font-size: 16px; border-width: 9px; border-image-width: 9px; }
+.btn.lg { min-height: 60px; padding: .24em 40px 0; font-size: 24px; }
+.badge { display: inline-grid; place-items: center; min-width: 58px; height: 22px; padding: 0 10px; background: url(img/ld_promo.png) center / 100% 100%;
+  font: 600 13px/1 var(--body); color: var(--ink); }
+
+/* ---------- верхняя панель ---------- */
+.top { position: sticky; top: 0; z-index: 30; background: linear-gradient(rgba(5,7,11,.96), rgba(5,7,11,.88)); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); }
+.top .wrap { display: flex; align-items: center; gap: 28px; min-height: 72px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand img { width: 44px; height: 44px; border-radius: 10px; box-shadow: 0 0 0 1px rgba(214,189,143,.4), 0 4px 10px rgba(0,0,0,.6); }
+.brand b { display: block; font: 700 19px/1 var(--word); letter-spacing: .06em; background: linear-gradient(#fff3d6, #d6a86a 70%, #a26a3c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.brand small { display: block; margin-top: 4px; font: 11px/1 var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.menu { display: flex; gap: 24px; font: 15px var(--display); color: var(--gold); }
+.menu a:hover { color: var(--cream); }
+.top .right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.wallet { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px 0 10px; border-radius: 20px; background: #050608; box-shadow: inset 0 0 0 1px rgba(214,189,143,.25); font: 17px var(--display); }
+.wallet img { width: 22px; height: 26px; }
+
+/* ---------- главный экран ---------- */
+.hero { position: relative; overflow: hidden; background: #0b1018 url(img/ld_hall.jpg) 50% 30% / cover; border-bottom: 1px solid var(--line); }
+.hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6,8,13,.92) 0%, rgba(6,8,13,.6) 38%, rgba(6,8,13,0) 60%), linear-gradient(0deg, rgba(10,13,20,1) 0%, rgba(10,13,20,0) 24%); z-index: 1; pointer-events: none; }
+.hero .king { position: absolute; right: 0; top: 0; width: 66%; height: 100%; object-fit: cover; object-position: 62% 30%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 34%); mask-image: linear-gradient(90deg, transparent 0%, #000 34%); }
+.hero .wrap { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; min-height: 600px; padding-block: 56px 72px; }
+.kick { display: flex; align-items: center; gap: 12px; font: 13px/1 var(--display); letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+.kick::before { content: ''; width: 36px; height: 1px; background: currentColor; }
+.hero h1 { max-width: 560px; margin: 18px 0 16px; font: 56px/1.04 var(--display); font-weight: 400; color: #fff6e0; text-wrap: balance; text-shadow: 0 3px 0 rgba(0,0,0,.6), 0 0 30px rgba(0,0,0,.6); }
+.hero p { max-width: 480px; margin: 0 0 26px; font-size: 17px; color: #ddd5c4; text-shadow: 0 1px 3px #000; }
+.ctas { display: flex; flex-wrap: wrap; gap: 14px; }
+.offer { display: flex; align-items: center; gap: 16px; max-width: 540px; margin-top: 34px; padding: 12px 14px 12px 8px; background: linear-gradient(90deg, rgba(6,8,13,.85), rgba(6,8,13,.35)); border-left: 2px solid var(--badge); }
+.offer img { width: 96px; height: 96px; object-fit: contain; filter: drop-shadow(0 6px 10px rgba(0,0,0,.6)); }
+.offer > div { flex: 1; min-width: 0; }
+.offer .t { white-space: nowrap; font: 13px var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--badge); }
+.offer .n { font: 21px/1.2 var(--display); color: #fff6e0; }
+.offer .s { font-size: 13px; color: var(--muted); }
+.offer .btn { margin-left: auto; }
+
+/* ---------- полоса преимуществ ---------- */
+.perks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: -1px; border-bottom: 1px solid var(--line); background: #0d1119; }
+.perks > div { display: flex; align-items: center; gap: 14px; padding: 18px 20px; }
+.perks > div + div { border-left: 1px solid var(--line); }
+.perks svg { flex: 0 0 34px; width: 34px; height: 34px; color: var(--copper-hi); }
+.perks b { display: block; font: 15px var(--display); font-weight: 400; color: var(--cream); }
+.perks span { font-size: 13px; color: var(--muted); }
+
+/* ---------- разделы ---------- */
+section { position: relative; padding: 72px 0 40px; scroll-margin-top: 72px; }
+.sh { display: flex; align-items: center; gap: 18px; margin-bottom: 28px; }
+.sh h2 { margin: 0; font: 34px/1 var(--display); font-weight: 400; color: #fff6e0; text-transform: uppercase; letter-spacing: .03em; }
+.sh::after { content: ''; flex: 1; height: 2px; background: linear-gradient(90deg, rgba(208,138,90,.8), rgba(208,138,90,0)); }
+.sh small { font-size: 14px; color: var(--muted); }
+
+/* ---------- кристаллы: как экран магазина в игре ---------- */
+#crystals { background: linear-gradient(rgba(10,13,20,.86), rgba(10,13,20,.94)), url(img/ld_stone.jpg) 50% 50% / cover; }
+.shop { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.tile { position: relative; aspect-ratio: 420 / 500; display: flex; flex-direction: column; align-items: center; padding: 0; cursor: pointer; text-align: center;
+  border: solid transparent; border-image: url(img/ld_tile.png) 70 fill / 14% 16.667% stretch; background: none; transition: transform .15s, filter .15s; }
+.tile:hover { transform: translateY(-3px); filter: brightness(1.08); }
+.tile.on { filter: drop-shadow(0 0 0 #000) drop-shadow(0 0 14px rgba(242,193,78,.55)); }
+.tile.on::after { content: ''; position: absolute; inset: 2px; border: 2px solid rgba(242,193,78,.9); pointer-events: none; }
+.tile .badge { position: absolute; top: 5%; right: 7%; }
+.tile .ic { flex: 1; width: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 16% 10% 2%; }
+.tile .ic img { max-width: 86%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0,0,0,.55)); }
+.tile[data-wide] .ic img { max-width: 100%; }
+.tile .amt { display: flex; align-items: center; gap: 6px; margin: 2px 0 6px; font: 22px/1 var(--display); color: #fff6e0; }
+.tile .amt img { width: 16px; height: 19px; }
+.tile .btn { width: 78%; margin-bottom: 9%; }
+
+.detail { position: sticky; top: 92px; padding: 6px 8px 10px; text-align: center; border: 34px solid transparent; border-image: url(img/ld_window.png) 110 fill / 44px stretch; filter: drop-shadow(0 14px 22px rgba(0,0,0,.55)); }
+.detail .k { font: 14px var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.detail h3 { margin: 8px 0 4px; font: 30px/1.1 var(--display); font-weight: 400; color: #fff6e0; text-transform: uppercase; }
+.detail .s { color: var(--muted); font-size: 14px; }
+.detail .s b { color: var(--badge); font-weight: 500; }
+.detail hr { border: 0; height: 1px; margin: 16px 10% 0; background: linear-gradient(90deg, transparent, rgba(214,189,143,.45), transparent); }
+.stage { position: relative; height: 290px; margin: 6px -10px 0; }
+.stage .ped { position: absolute; left: 50%; bottom: 0; width: 92%; transform: translateX(-50%); }
+.stage .pk { position: absolute; left: 50%; bottom: 62px; width: 200px; transform: translateX(-50%); filter: drop-shadow(0 12px 14px rgba(0,0,0,.6)); animation: float 4s ease-in-out infinite; }
+.stage .pk.wide { width: 250px; bottom: 50px; }
+@keyframes float { 50% { transform: translate(-50%, -8px); } }
+.detail p { margin: 10px 4px 16px; font-size: 14px; color: #cfc8b8; }
+.detail .btn { width: 100%; }
+
+/* ---------- боевой пропуск ---------- */
+.pass { position: relative; display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 420px; overflow: hidden;
+  background: url(img/ld_castle.jpg) 50% 60% / cover; border: 1px solid var(--line); }
+.pass::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6,8,13,.94) 0%, rgba(6,8,13,.7) 42%, rgba(6,8,13,.05) 70%); }
+.pass > * { position: relative; }
+.pass .txt { padding: 40px 44px; }
+.pass .logo { width: min(340px, 100%); filter: drop-shadow(0 3px 0 rgba(0,0,0,.6)); }
+.pass .prem { margin: 4px 0 16px; font: 26px var(--display); letter-spacing: .08em; color: var(--gold); text-transform: uppercase; }
+.pass ul { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 10px; }
+.pass li { display: flex; align-items: center; gap: 12px; font-size: 16px; color: #e8e1d2; }
+.pass li img { width: 22px; height: 21px; }
+.pass .row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.pass .price { font: 30px var(--display); color: #fff6e0; } .pass .price small { font: 14px var(--body); color: var(--muted); margin-left: 6px; }
+.pass .fine { margin-top: 12px; font-size: 12px; color: var(--muted); }
+.pass .chest { justify-self: center; align-self: end; width: min(360px, 82%); margin-bottom: 62px; filter: drop-shadow(0 18px 20px rgba(0,0,0,.7)) drop-shadow(0 0 30px rgba(255,170,80,.25)); }
+
+/* ---------- скины ---------- */
+.chips { display: inline-flex; gap: 6px; margin: -6px 0 26px; flex-wrap: wrap; }
+.chips button { min-height: 38px; padding: 0 18px; border-radius: 19px; border: 0; cursor: pointer; background: #1a1e27; color: var(--gold); font: 15px var(--display); box-shadow: inset 0 0 0 1px rgba(214,189,143,.18); }
+.chips button.on { color: var(--ink); background: linear-gradient(#f0b88a, #c9814f); box-shadow: inset 0 0 0 1px rgba(255,230,200,.5); }
+.skins { display: grid; grid-template-columns: repeat(5, 1fr); gap: 34px 20px; }
+.skin { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.skin .gcard { width: min(100%, 176px); transition: transform .25s; }
+.skin:hover .gcard { transform: translateY(-6px); }
+.skin .badge { position: absolute; z-index: 3; top: 4%; right: 6%; }
+.skin .nm { margin-top: 12px; font: 17px/1.2 var(--display); color: #fff6e0; }
+.skin .un { margin-top: 3px; font-size: 13px; color: var(--muted); }
+.skin .rar { font: 12px var(--body); letter-spacing: .12em; text-transform: uppercase; }
+.skin .buy { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 12px; }
+.skin .p { font: 19px/1 var(--display); color: #fff6e0; } .skin .p s { display: block; margin-top: 4px; font: 12px var(--body); color: #7d818a; }
+
+/* игровые рамки карточек (как в «У моря»): картинка обрезана по окну рамки, чтобы не торчала серая рамка иконки */
+.gcard { position: relative; aspect-ratio: var(--ar, .536); }
+.gcard .art { position: absolute; inset: 0; clip-path: var(--cp); }
+/* картинка с запасом шире окна рамки, а clip-path обрезает её по форме окна (контур окна + 4px под рамку).
+   Не маска-картинка: при открытии страницы из папки (file://) браузер маску не грузит и прячет всё */
+.gcard .art > i { position: absolute; inset: var(--in, 13% 7% 23.5% 7%); overflow: hidden; background: radial-gradient(circle at 50% 40%, var(--rc), #0b0f16 75%); }
+/* у иконок своя серая рамка ~7px из 320 — картинка чуть выше окна, чтобы эта рамка ушла под край */
+.gcard .art img { position: absolute; left: 0; top: -3.5%; width: 100%; height: 107%; object-fit: cover; }
+.gcard .art > i::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 26px rgba(0,0,0,.85); }
+.gcard .fr { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; filter: drop-shadow(0 10px 18px rgba(0,0,0,.7)); }
+.gcard[data-r="legendary"] { --in: 16% 10.5% 28% 10.5%; --rc: rgba(255,150,50,.6); }
+.gcard[data-r="legendary"] { --cp: polygon(41.9% 17.2%, 30.7% 18.5%, 24.7% 19.7%, 20.3% 21.0%, 17.8% 22.2%, 15.6% 23.5%, 14.2% 24.7%, 13.2% 26.0%, 12.6% 27.2%, 12.1% 28.5%, 12.1% 29.8%, 11.8% 31.0%, 11.8% 32.3%, 11.8% 33.5%, 11.8% 34.8%, 11.8% 36.0%, 11.8% 37.3%, 11.8% 38.5%, 11.8% 39.8%, 11.8% 41.1%, 11.8% 42.3%, 11.8% 43.6%, 11.8% 44.8%, 12.1% 46.1%, 11.8% 47.3%, 11.8% 48.6%, 11.5% 49.9%, 11.5% 51.1%, 11.8% 52.4%, 11.8% 53.6%, 11.5% 54.9%, 11.5% 56.1%, 11.5% 57.4%, 11.8% 58.6%, 11.8% 59.9%, 12.1% 61.2%, 12.6% 62.4%, 13.7% 63.7%, 15.1% 64.9%, 17.3% 66.2%, 20.5% 67.4%, 23.8% 68.7%, 27.4% 69.9%, 33.4% 71.4%, 66.0% 71.4%, 73.2% 69.9%, 76.4% 68.7%, 80.0% 67.4%, 83.0% 66.2%, 85.2% 64.9%, 86.3% 63.7%, 87.4% 62.4%, 87.9% 61.2%, 88.2% 59.9%, 87.7% 58.6%, 87.7% 57.4%, 87.7% 56.1%, 87.7% 54.9%, 87.7% 53.6%, 87.7% 52.4%, 88.2% 51.1%, 88.5% 49.9%, 88.5% 48.6%, 88.5% 47.3%, 88.5% 46.1%, 88.2% 44.8%, 88.2% 43.6%, 88.2% 42.3%, 88.2% 41.1%, 88.2% 39.8%, 88.2% 38.5%, 88.2% 37.3%, 88.2% 36.0%, 88.2% 34.8%, 88.2% 33.5%, 88.2% 32.3%, 88.2% 31.0%, 87.9% 29.8%, 87.7% 28.5%, 87.4% 27.2%, 86.8% 26.0%, 85.8% 24.7%, 84.4% 23.5%, 81.9% 22.2%, 79.5% 21.0%, 75.1% 19.7%, 69.3% 18.5%, 57.3% 17.2%); }
+.gcard[data-r="epic"] { --rc: rgba(180,107,255,.55); }
+.gcard[data-r="epic"] { --cp: polygon(36.1% 14.2%, 27.9% 15.7%, 21.9% 17.0%, 15.0% 18.4%, 11.5% 19.9%, 9.8% 21.2%, 9.3% 22.7%, 9.0% 24.2%, 9.0% 25.5%, 9.0% 26.9%, 9.0% 28.4%, 9.0% 29.7%, 9.0% 31.2%, 9.3% 32.7%, 9.3% 34.0%, 9.3% 35.4%, 9.3% 36.9%, 8.7% 38.2%, 8.7% 39.7%, 8.7% 41.1%, 8.7% 42.5%, 8.7% 43.9%, 8.7% 45.4%, 8.7% 46.9%, 8.7% 48.2%, 8.7% 49.6%, 8.7% 51.1%, 8.7% 52.4%, 8.7% 53.9%, 8.7% 55.3%, 8.7% 56.7%, 8.7% 58.1%, 8.7% 59.6%, 8.7% 60.9%, 9.0% 62.4%, 9.3% 63.8%, 9.8% 65.2%, 9.8% 66.6%, 10.9% 68.1%, 12.8% 69.4%, 16.1% 70.9%, 22.7% 72.3%, 31.7% 73.6%, 46.2% 75.3%, 55.7% 75.3%, 68.6% 73.6%, 78.7% 72.3%, 88.5% 70.9%, 86.9% 69.4%, 88.8% 68.1%, 90.7% 66.6%, 91.0% 65.2%, 91.5% 63.8%, 91.8% 62.4%, 91.8% 60.9%, 91.8% 59.6%, 91.5% 58.1%, 91.5% 56.7%, 91.8% 55.3%, 91.8% 53.9%, 91.8% 52.4%, 91.8% 51.1%, 91.8% 49.6%, 91.8% 48.2%, 91.3% 46.9%, 91.0% 45.4%, 91.0% 43.9%, 91.0% 42.5%, 91.5% 41.1%, 91.5% 39.7%, 91.5% 38.2%, 91.5% 36.9%, 91.3% 35.4%, 91.3% 34.0%, 91.3% 32.7%, 91.3% 31.2%, 91.3% 29.7%, 91.3% 28.4%, 91.3% 26.9%, 91.3% 25.5%, 91.0% 24.2%, 90.7% 22.7%, 90.4% 21.2%, 89.1% 19.9%, 86.1% 18.4%, 80.3% 17.0%, 73.8% 15.7%, 41.3% 14.2%); }
+.gcard[data-r="rare"] { --rc: rgba(224,161,106,.45); }
+.gcard[data-r="rare"] { --cp: polygon(38.0% 14.2%, 28.1% 15.7%, 22.4% 17.0%, 15.3% 18.4%, 11.5% 19.9%, 9.3% 21.4%, 8.5% 22.7%, 8.5% 24.2%, 8.5% 25.6%, 8.5% 27.1%, 8.5% 28.4%, 8.5% 29.9%, 8.5% 31.3%, 8.5% 32.8%, 8.5% 34.1%, 8.5% 35.6%, 8.5% 37.0%, 8.5% 38.5%, 8.5% 39.8%, 8.5% 41.3%, 8.5% 42.8%, 8.5% 44.2%, 8.5% 45.5%, 8.2% 47.0%, 8.2% 48.5%, 8.2% 49.9%, 8.2% 51.2%, 8.2% 52.7%, 8.2% 54.2%, 8.2% 55.6%, 8.2% 57.0%, 8.2% 58.4%, 8.2% 59.9%, 8.2% 61.3%, 8.2% 62.7%, 8.5% 64.1%, 8.7% 65.6%, 9.3% 67.1%, 10.1% 68.4%, 12.0% 69.8%, 15.6% 71.3%, 21.3% 72.8%, 30.3% 74.1%, 53.0% 75.7%, 53.3% 75.7%, 69.4% 74.1%, 79.8% 72.8%, 84.4% 71.3%, 87.2% 69.8%, 89.3% 68.4%, 90.4% 67.1%, 91.3% 65.6%, 91.5% 64.1%, 91.8% 62.7%, 91.8% 61.3%, 92.1% 59.9%, 91.5% 58.4%, 91.5% 57.0%, 92.1% 55.6%, 91.8% 54.2%, 91.8% 52.7%, 91.8% 51.2%, 91.8% 49.9%, 91.8% 48.5%, 91.8% 47.0%, 91.5% 45.5%, 91.5% 44.2%, 91.0% 42.8%, 91.5% 41.3%, 91.5% 39.8%, 91.5% 38.5%, 91.5% 37.0%, 91.5% 35.6%, 91.5% 34.1%, 91.3% 32.8%, 91.3% 31.3%, 91.3% 29.9%, 91.3% 28.4%, 91.3% 27.1%, 91.3% 25.6%, 91.3% 24.2%, 91.0% 22.7%, 90.4% 21.4%, 88.8% 19.9%, 85.5% 18.4%, 79.2% 17.0%, 71.9% 15.7%, 38.8% 14.2%); }
+
+/* ---------- наборы ---------- */
+.bundles { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+.bundle { display: flex; align-items: center; gap: 22px; padding: 6px 10px; border: 34px solid transparent; border-image: url(img/ld_window.png) 110 fill / 44px stretch; filter: drop-shadow(0 12px 18px rgba(0,0,0,.5)); }
+.bundle .pics { flex: 0 0 auto; display: flex; }
+.bundle .pics .gcard { width: 84px; }
+.bundle .pics .gcard + .gcard { margin-left: -18px; }
+.bundle .pics .gcard:nth-child(2) { z-index: 2; transform: translateY(-8px); }
+.bundle .k { font: 12px var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--badge); }
+.bundle h3 { margin: 6px 0 6px; font: 26px/1.1 var(--display); font-weight: 400; color: #fff6e0; }
+.bundle ul { margin: 0 0 14px; padding-left: 18px; color: #d9d2c2; font-size: 14px; }
+.bundle .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.bundle .price { font: 26px var(--display); color: #fff6e0; } .bundle .price s { font: 15px var(--body); color: #7d818a; margin-left: 8px; }
+
+/* ---------- как купить ---------- */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.step { display: flex; gap: 16px; align-items: flex-start; padding: 22px 20px; background: linear-gradient(#141923, #0f131b); border: 1px solid var(--line); }
+/* цифра по центру шестиугольника: у Friz цифры сидят выше середины строки, поэтому сдвиг вниз */
+.step .n { flex: 0 0 52px; height: 58px; display: grid; place-items: center; padding-top: 6px; background: url(img/ld_badge.png) center / contain no-repeat; font: 24px/1 var(--display); color: #fff; text-shadow: 0 2px 0 #000; }
+.step b { display: block; margin-bottom: 4px; font: 19px var(--display); font-weight: 400; color: #fff6e0; }
+.step span { font-size: 14px; color: var(--muted); }
+
+/* ---------- вопросы ---------- */
+.faq { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 22px; align-items: start; }
+.faq details { padding: 16px 20px; background: #10141c; border: 1px solid var(--line); }
+.faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; font: 17px var(--display); color: #fff6e0; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: '+'; color: var(--copper-hi); font-size: 22px; line-height: 1; }
+.faq details[open] summary::after { content: '−'; }
+.faq p { margin: 10px 0 0; color: #cfc8b8; font-size: 14px; }
+
+/* ---------- подвал ---------- */
+footer { margin-top: 56px; background: #06080c; border-top: 1px solid var(--line); }
+footer .wrap { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 24px; padding-block: 36px 20px; }
+footer h5 { margin: 0 0 10px; font: 15px var(--display); font-weight: 400; color: var(--gold); }
+footer a, footer p { display: block; margin: 0 0 6px; font-size: 14px; color: var(--muted); }
+footer a:hover { color: var(--cream); }
+.legal { grid-column: 1 / -1; padding-top: 14px; border-top: 1px solid #141821; font-size: 12px; color: #6d717a; }
+
+/* ---------- окно покупки ---------- */
+.co-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: rgba(3,5,9,.8); opacity: 0; transition: opacity .2s; }
+.co-overlay.open { opacity: 1; }
+.co-modal { position: relative; width: min(470px, 100%); max-height: calc(100vh - 32px); overflow: auto; padding: 4px 6px 8px; border: 30px solid transparent; border-image: url(img/ld_window.png) 110 fill / 40px stretch; }
+.co-title { margin: 0 0 16px; text-align: center; font: 26px var(--display); text-transform: uppercase; letter-spacing: .06em; color: #fff6e0; }
+.co-close { position: absolute; right: 0; top: -6px; z-index: 2; width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer; font-size: 22px; color: var(--gold); background: rgba(255,255,255,.06); }
+.co-item { display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(255,255,255,.04); border: 1px solid var(--line); margin-bottom: 12px; }
+.co-thumb { flex: 0 0 64px; height: 64px; display: grid; place-items: center; }
+.co-art { width: 64px; height: 64px; object-fit: contain; }
+.co-meta { flex: 1; } .co-name { font: 17px var(--display); color: #fff6e0; } .co-sub { color: var(--muted); font-size: 13px; }
+.co-price { font: 20px var(--display); color: var(--badge); white-space: nowrap; }
+.co-label { display: block; margin: 10px 0 6px; font: 14px var(--display); color: var(--gold); }
+.co-input { display: block; width: 100%; margin-top: 6px; padding: 11px 12px; border: 1px solid rgba(214,189,143,.3); background: #06080c; color: #fff; font: 15px var(--body); }
+.co-input:focus { outline: none; border-color: var(--copper-hi); }
+.co-hint { color: #80848c; font-size: 12px; margin-top: 4px; }
+.co-row { display: flex; gap: 8px; } .co-row .co-input { margin: 0; }
+.co-apply { flex: 0 0 auto; padding: .24em 16px 0; cursor: pointer; border: 9px solid transparent; border-image: url(img/ld_btn_dark.png) 30 fill / 9px stretch; background: none; color: var(--cream); font: 15px var(--display); }
+.co-promo-msg { min-height: 18px; font-size: 13px; margin-top: 4px; color: #8fcb7a; } .co-promo-msg[data-ok="0"] { color: #ff8a7a; }
+.co-pay { display: flex; gap: 8px; flex-wrap: wrap; }
+.co-method input { position: absolute; opacity: 0; }
+.co-method span { display: inline-block; padding: 9px 12px; cursor: pointer; background: #10141c; border: 1px solid #2c313c; font-size: 14px; }
+.co-method input:checked + span { border-color: var(--copper-hi); color: var(--copper-hi); box-shadow: 0 0 0 1px var(--copper-hi); }
+.co-method input:focus-visible + span { outline: 2px solid #fff; }
+.co-buy { width: 100%; margin-top: 18px; min-height: 58px; padding: .24em 0 0; cursor: pointer; font: 21px var(--display); color: var(--ink); background: none; border: 12px solid transparent; border-image: url(img/ld_btn_copper.png) 24 fill / 12px stretch; }
+.co-fine { margin-top: 10px; color: #7a7e86; font-size: 12px; text-align: center; }
+.toast { position: fixed; left: 50%; bottom: 24px; z-index: 200; transform: translate(-50%, 30px); opacity: 0; transition: .25s; pointer-events: none;
+  padding: 12px 24px; background: #0b0e14; border: 1px solid rgba(214,189,143,.45); font: 15px var(--display); color: var(--cream); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- адаптив ---------- */
+@media (max-width: 1100px) {
+  .menu { display: none; }
+  .shop { grid-template-columns: 1fr 320px; }
+  .stage .pk { width: 180px; } .stage .pk.wide { width: 220px; }
+  .skins { grid-template-columns: repeat(4, 1fr); }
+  .perks { grid-template-columns: repeat(2, 1fr); } .perks > div:nth-child(3) { border-left: 0; } .perks > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+@media (max-width: 900px) {
+  .hero .king { width: 100%; opacity: .55; -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 45%); mask-image: linear-gradient(0deg, transparent 0%, #000 45%); }
+  .hero::before { background: linear-gradient(0deg, rgba(10,13,20,1) 8%, rgba(6,8,13,.55) 60%, rgba(6,8,13,.3) 100%); }
+  .hero .wrap { min-height: 0; padding-block: 220px 40px; }
+  .hero h1 { font-size: 42px; }
+  .shop { grid-template-columns: 1fr; }
+  .detail { position: relative; top: 0; display: grid; grid-template-columns: 1fr 1fr; align-items: center; text-align: left; gap: 0 18px; }
+  .detail .stage { grid-row: 1 / span 5; grid-column: 2; }
+  .detail hr { display: none; }
+  .pass { grid-template-columns: 1fr; }
+  .pass::before { background: linear-gradient(0deg, rgba(6,8,13,.95) 30%, rgba(6,8,13,.5) 100%); }
+  .pass .chest { order: -1; width: 200px; margin: 30px 0 -20px; }
+  .skins { grid-template-columns: repeat(3, 1fr); }
+  .bundles, .steps, .faq { grid-template-columns: 1fr; }
+  footer .wrap { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .brand small, .wallet { display: none; }
+  .top .wrap { gap: 12px; min-height: 62px; }
+  .brand b { font-size: 16px; }
+  .hero h1 { font-size: 34px; }
+  .hero .wrap { padding-top: 170px; }
+  .offer { flex-wrap: wrap; gap: 10px 14px; } .offer img { width: 72px; height: 72px; } .offer > div { flex: 1 1 150px; } .offer .btn { flex: 1 1 100%; margin-left: 0; }
+  .perks { grid-template-columns: 1fr; } .perks > div { border-left: 0 !important; } .perks > div + div { border-top: 1px solid var(--line); }
+  section { padding-top: 54px; }
+  .sh h2 { font-size: 26px; }
+  .tiles { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .tile .amt { font-size: 19px; }
+  .tile .btn { width: 84%; font-size: 15px; min-height: 36px; }
+  .detail { display: block; text-align: center; }
+  .detail .stage { height: 236px; } .stage .pk { width: 170px; bottom: 50px; } .stage .pk.wide { width: 210px; bottom: 44px; }
+  .pass .txt { padding: 26px 20px; }
+  .skins { grid-template-columns: repeat(2, 1fr); gap: 26px 12px; }
+  .skin .buy { flex-direction: column; gap: 8px; }
+  .bundle { flex-direction: column; text-align: center; border-width: 26px; border-image-width: 34px; }
+  .bundle .row { justify-content: center; } .bundle ul { list-style: none; padding: 0; }
+  footer .wrap { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .stage .pk { animation: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="img/ld_icon.png" alt=""><span><b>LEGIONS DEFENSE</b><small>Официальный магазин</small></span></a>
+    <nav class="menu" aria-label="Разделы"><a href="#crystals">Кристаллы</a><a href="#pass">Боевой пропуск</a><a href="#skins">Скины</a><a href="#bundles">Наборы</a><a href="#faq">Вопросы</a></nav>
+    <div class="right">
+      <div class="wallet" title="Баланс аккаунта"><img src="img/ld_crystal.png" alt="">0</div>
+      <button class="btn copper sm" data-login>Войти</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <img class="king" src="img/ld_king.jpg" alt="">
+    <div class="wrap">
+      <div class="kick">Официальный магазин Legions Defense</div>
+      <h1>Кристаллы, скины и боевой пропуск</h1>
+      <p>Покупай напрямую у разработчика: картой РФ или по СБП. Покупка приходит на аккаунт сразу, без магазина приложений.</p>
+      <div class="ctas"><a class="btn copper lg" href="#crystals">Выбрать кристаллы</a><a class="btn dark lg" href="#pass">Боевой пропуск</a></div>
+      <div class="offer" id="offer"></div>
+    </div>
+  </div>
+
+  <div class="perks">
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.8 8 10 4.6-1.2 8-5 8-10v-6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg><div><b>Магазин разработчика</b><span>Официальная продажа, без посредников</span></div></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 9.5h19M6 15h4"/></svg><div><b>Карта РФ, СБП, ЮMoney</b><span>Платёж в рублях</span></div></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></svg><div><b>Приходит сразу</b><span>Без перезапуска игры</span></div></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3.5 10h17v10.5h-17zM2.5 6.5h19V10h-19zM12 6.5v14"/><path d="M12 6.5C10.5 3 7 3 7 5s2.5 1.5 5 1.5c2.5 0 5 .5 5-1.5s-3.5-2-5 1.5"/></svg><div><b>До +50% кристаллов</b><span>Бонус на крупные наборы</span></div></div>
+  </div>
+
+  <section id="crystals">
+    <div class="wrap">
+      <div class="sh"><h2>Кристаллы</h2></div>
+      <div class="shop">
+        <div class="tiles" id="tiles"></div>
+        <aside class="detail" id="detail" aria-live="polite"></aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="pass">
+    <div class="wrap">
+      <div class="pass">
+        <div class="txt">
+          <img class="logo" src="img/ld_bp_logo.png" alt="Battle Pass">
+          <div class="prem">Премиум · Сезон 1</div>
+          <ul>
+            <li><img src="img/ld_check.png" alt="">Награды премиум-дорожки весь сезон</li>
+            <li><img src="img/ld_check.png" alt="">Скины юнитов на премиум-дорожке</li>
+            <li><img src="img/ld_check.png" alt="">Уровни можно докупать за кристаллы</li>
+          </ul>
+          <div class="row"><span class="price">449 ₽<small>в месяц</small></span><button class="btn copper lg" data-buy="bundle:bp">Купить премиум</button></div>
+          <div class="fine">Продлевается раз в месяц, отключить можно в любой момент.</div>
+        </div>
+        <img class="chest" src="img/ld_chest_premium.png" alt="Премиум-сундук боевого пропуска">
+      </div>
+    </div>
+  </section>
+
+  <section id="skins">
+    <div class="wrap">
+      <div class="sh"><h2>Скины</h2></div>
+      <div class="chips" role="group" aria-label="Редкость"><button class="on" data-f="all">Все</button><button data-f="legendary">Легендарные</button><button data-f="epic">Эпические</button><button data-f="rare">Редкие</button></div>
+      <div class="skins" id="skinGrid"></div>
+    </div>
+  </section>
+
+  <section id="bundles">
+    <div class="wrap">
+      <div class="sh"><h2>Наборы</h2></div>
+      <div class="bundles" id="bundleBox"></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="sh"><h2>Как купить</h2></div>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><div><b>Узнай ID игрока</b><span>В игре открой профиль: ID — цифры под ником.</span></div></div>
+        <div class="step"><div class="n">2</div><div><b>Выбери товар</b><span>Кристаллы, скин, набор или боевой пропуск.</span></div></div>
+        <div class="step"><div class="n">3</div><div><b>Оплати</b><span>Картой РФ, по СБП или через ЮMoney. Покупка придёт в игру сразу.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="sh"><h2>Вопросы</h2></div>
+      <div class="faq">
+        <details open><summary>Когда придут кристаллы?</summary><p>Сразу после оплаты. Если игра открыта, перезапускать её не нужно: баланс обновится сам.</p></details>
+        <details><summary>Где найти ID игрока?</summary><p>Открой профиль в игре. ID — это цифры под твоим ником.</p></details>
+        <details><summary>Чем сайт отличается от покупки в игре?</summary><p>Кристаллы те же и приходят на тот же аккаунт. На сайте можно платить картой РФ и по СБП, а промокод ЛЕГИОН даёт ещё +10% кристаллов.</p></details>
+        <details><summary>Можно ли вернуть покупку?</summary><p>Напиши в поддержку. Если кристаллы ещё не потрачены, оформим возврат.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><a class="brand" href="#top"><img src="img/ld_icon.png" alt=""><span><b>LEGIONS DEFENSE</b><small>Официальный магазин</small></span></a><p style="margin-top:14px">Магазин кристаллов, скинов и боевого пропуска для игры Legions Defense.</p></div>
+    <div><h5>Покупателям</h5><a href="#how">Как купить</a><a href="#faq">Где найти ID</a><a href="#faq">Возврат</a></div>
+    <div><h5>Документы</h5><a href="#top">Пользовательское соглашение</a><a href="#top">Политика конфиденциальности</a><a href="#top">Оферта</a></div>
+    <div><h5>Оплата</h5><p>СБП</p><p>Банковские карты РФ</p><p>ЮMoney</p></div>
+    <div class="legal">© 2026 Legions Defense · Макет: цены и тексты черновые</div>
+  </div>
+</footer>
+
+<script src="shared/data.js"></script>
+<script>
+// Официальный магазин: настоящие наборы кристаллов из игры (ShopConfig: 100 / 550 / 1200 / 3900 / 6800 / 15000), цены в рублях — черновые
+SHOP.promo = { code: 'ЛЕГИОН', bonus: 10 };
+SHOP.crystals = [
+  { id: 'p1', name: 'Пара кристаллов',    amount: 100,   bonus: 0,    pct: 0,  price: 99,   img: 'crystal_pack_100' },
+  { id: 'p2', name: 'Горсть кристаллов',  amount: 500,   bonus: 50,   pct: 10, price: 449,  img: 'crystal_pack_550' },
+  { id: 'p3', name: 'Россыпь кристаллов', amount: 1000,  bonus: 200,  pct: 20, price: 899,  img: 'crystal_pack_1200' },
+  { id: 'p4', name: 'Мешок кристаллов',   amount: 3000,  bonus: 900,  pct: 30, price: 2690, img: 'crystal_pack_3900', tag: 'Хит' },
+  { id: 'p5', name: 'Кошель кристаллов',  amount: 5000,  bonus: 1800, pct: 36, price: 4490, img: 'crystal_pack_6800' },
+  { id: 'p6', name: 'Сундук кристаллов',  amount: 10000, bonus: 5000, pct: 50, price: 8990, img: 'crystal_pack_15000', tag: 'Выгодно', wide: true },
+];
+SHOP.bundles = [
+  { id: 'bp', name: 'Боевой пропуск · Премиум', price: 449, items: ['chest_legendary'], lines: ['Сезон 1', 'награды премиум-дорожки'] },
+  { id: 'b1', name: 'Набор Легиона', price: 1490, old: 2490, items: ['skin_sheep', 'skin_iron_golem', 'skin_siege_cart'], lines: ['3 легендарных скина', '2 000 кристаллов', 'Рамка аватара — только в наборе'] },
+  { id: 'b2', name: 'Набор новичка', price: 299, old: 549, once: true, items: ['skin_archer'], lines: ['Скин «Ночная тень»', '500 кристаллов'] },
+];
+// цвета редкости — как в игре (ShopPreviewArt.RarityColor)
+SHOP.rarity = { rare: { label: 'Редкий', color: '#e0a16a' }, epic: { label: 'Эпический', color: '#c08cf2' }, legendary: { label: 'Легендарный', color: '#f2c14e' } };
+</script>
+<script src="shared/common.js"></script>
+<script>
+const S = SHOP, { rub, num, toast } = UI;
+const total = p => p.amount + p.bonus;
+const icon = p => `<img src="img/${p.img}.png" alt="">`;
+
+// ---------- лучшее предложение на главном экране ----------
+const best = S.crystals[5];
+document.getElementById('offer').innerHTML = `${icon(best)}<div><div class="t">Лучшее предложение</div><div class="n">${num(total(best))} кристаллов</div><div class="s">+${best.pct}% в подарок</div></div>
+  <button class="btn copper" data-buy="crystals:${best.id}">${rub(best.price)}</button>`;
+
+// ---------- плитки и карточка выбранного набора ----------
+const tiles = document.getElementById('tiles'), detail = document.getElementById('detail');
+tiles.innerHTML = S.crystals.map(p => `
+  <div class="tile" role="button" tabindex="0" data-pack="${p.id}" ${p.wide ? 'data-wide' : ''} aria-label="${p.name}: ${num(total(p))} кристаллов">
+    ${p.pct ? `<span class="badge">+${p.pct}%</span>` : ''}
+    <div class="ic">${icon(p)}</div>
+    <div class="amt">${num(total(p))}<img src="img/ld_crystal.png" alt=""></div>
+    <button class="btn copper sm" data-buy="crystals:${p.id}">${rub(p.price)}</button>
+  </div>`).join('');
+
+function select(id) {
+  const p = S.crystals.find(x => x.id === id);
+  tiles.querySelectorAll('.tile').forEach(t => t.classList.toggle('on', t.dataset.pack === id));
+  detail.innerHTML = `
+    <div class="k">Набор кристаллов${p.pct ? ` +${p.pct}%` : ''}</div>
+    <h3>${num(total(p))} кристаллов</h3>
+    <div class="s">${p.bonus ? `${num(p.amount)} + <b>${num(p.bonus)} в подарок</b>` : 'Разовая покупка'}</div>
+    <hr>
+    <div class="stage"><img class="ped" src="img/ld_pedestal.png" alt=""><img class="pk${p.wide ? ' wide' : ''}" src="img/${p.img}.png" alt=""></div>
+    <p>Кристаллы тратятся на скины, эмоции и уровни боевого пропуска.</p>
+    <button class="btn copper lg" data-buy="crystals:${p.id}">Купить за ${rub(p.price)}</button>`;
+}
+tiles.addEventListener('click', e => { if (e.target.closest('[data-buy]')) return; const t = e.target.closest('.tile'); if (t) select(t.dataset.pack); });
+tiles.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.tile')) { e.preventDefault(); select(e.target.dataset.pack); } });
+select('p6');
+
+// ---------- скины в игровых рамках ----------
+const FR = { legendary: 'frame_full_legendary', epic: 'frame_full_epic', rare: 'frame_full_rare' };
+const card = (img, r) => `<div class="gcard" data-r="${r}"><div class="art"><i><img src="img/${img}.png" alt="" loading="lazy"></i></div><img class="fr" src="img/${FR[r]}.png" alt=""></div>`;
+const TAG = { imba: 'Хит', new: 'Новинка' };
+function renderSkins(f = 'all') {
+  document.getElementById('skinGrid').innerHTML = S.skins.filter(s => f === 'all' || s.rarity === f).map(s => {
+    const r = S.rarity[s.rarity];
+    const b = s.old ? `<span class="badge">−${Math.round((1 - s.price / s.old) * 100)}%</span>` : s.tag ? `<span class="badge">${TAG[s.tag]}</span>` : '';
+    return `<article class="skin">${b}${card(s.img, s.rarity)}
+      <div class="nm">${s.name}</div>
+      <div class="un"><span class="rar" style="color:${r.color}">${r.label}</span> · ${s.unit}</div>
+      <div class="buy"><span class="p">${rub(s.price)}${s.old ? `<s>${rub(s.old)}</s>` : ''}</span><button class="btn copper sm" data-buy="skin:${s.id}">Купить</button></div>
+    </article>`;
+  }).join('');
+}
+renderSkins();
+document.querySelectorAll('.chips button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.chips button').forEach(x => x.classList.toggle('on', x === b)); renderSkins(b.dataset.f);
+});
+
+// ---------- наборы ----------
+document.getElementById('bundleBox').innerHTML = S.bundles.filter(b => b.id !== 'bp').map(b => `
+  <div class="bundle">
+    <div class="pics">${b.items.map(i => card(i, S.skins.find(s => s.img === i).rarity)).join('')}</div>
+    <div>
+      <div class="k">${b.once ? 'Один раз на аккаунт' : 'Только на сайте'}</div>
+      <h3>${b.name}</h3>
+      <ul>${b.lines.map(l => `<li>${l}</li>`).join('')}</ul>
+      <div class="row"><span class="price">${rub(b.price)}<s>${rub(b.old)}</s></span><button class="btn copper" data-buy="bundle:${b.id}">Купить</button></div>
+    </div>
+  </div>`).join('');
+
+document.querySelectorAll('[data-login]').forEach(x => x.onclick = () => toast('Здесь будет вход по ID игрока'));
+</script>
+</body>
+</html>
