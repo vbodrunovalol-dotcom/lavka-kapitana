@@ -152,6 +152,42 @@ section { position: relative; padding: 72px 0 40px; scroll-margin-top: 72px; }
 .top3 .skin .gcard { width: min(100%, 168px); } .top3 .skin.leg .gcard { width: min(100%, 196px); }
 .commons .skin .gcard { width: min(100%, 112px); }
 .skin:hover .gcard { transform: translateY(-5px); }
+.skin[role="button"] { cursor: pointer; }
+.skin[role="button"]:focus-visible { outline: none; } .skin[role="button"]:focus-visible .nm { text-decoration: underline; text-underline-offset: 4px; }
+.skin .see { margin-top: 6px; font: 12px var(--body); color: var(--copper-hi); opacity: 0; transition: opacity .2s; }
+.skin:hover .see, .skin:focus-visible .see { opacity: 1; }
+/* легендарный: за рамкой медленно вращаются золотые лучи и дышит свечение, по картинке пробегает блик */
+.skin.leg .gcard { isolation: isolate; }
+.skin.leg .gcard::before { content: ''; position: absolute; left: 50%; top: 44%; width: 210%; aspect-ratio: 1; z-index: -1; pointer-events: none;
+  background: url(img/fx_rays_gold.png) center / contain no-repeat; animation: legrays 26s linear infinite; opacity: 1; filter: brightness(1.35); }
+.skin.leg .gcard::after { content: ''; position: absolute; left: 50%; top: 46%; width: 150%; aspect-ratio: 1; z-index: -1; pointer-events: none; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255,210,110,.85), rgba(255,150,40,.32) 55%, transparent 76%); animation: legglow 2.8s ease-in-out infinite alternate; }
+.skin.leg .gcard .fr { animation: legrim 2.8s ease-in-out infinite alternate; }
+@keyframes legrim { from { filter: drop-shadow(0 0 6px rgba(255,200,90,.7)) drop-shadow(0 10px 18px rgba(0,0,0,.7)); } to { filter: drop-shadow(0 0 14px rgba(255,205,100,1)) drop-shadow(0 0 30px rgba(255,150,40,.7)); } }
+.skin.leg .gcard .art > i::before { content: ''; position: absolute; inset: -20% -70%; z-index: 2; pointer-events: none; mix-blend-mode: screen;
+  background: linear-gradient(105deg, transparent 42%, rgba(255,226,160,.45) 48%, rgba(255,250,235,.9) 50%, rgba(255,226,160,.45) 52%, transparent 58%);
+  transform: translateX(-60%); animation: legshine 5s ease-in-out infinite; }
+@keyframes legrays { from { transform: translate(-50%, -50%) rotate(0); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes legglow { from { opacity: .5; transform: translate(-50%, -50%) scale(.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1.06); } }
+@keyframes legshine { 0%, 55% { transform: translateX(-60%); } 80%, 100% { transform: translateX(60%); } }
+
+/* ---------- окно с артом скина ---------- */
+.sk-overlay { position: fixed; inset: 0; z-index: 110; display: grid; place-items: center; padding: 16px; background: rgba(3,5,9,.86); opacity: 0; transition: opacity .25s; }
+.sk-overlay.open { opacity: 1; }
+.sk-modal { position: relative; width: min(940px, 100%); max-height: calc(100vh - 32px); overflow: auto; border: 26px solid transparent; border-image: url(img/ld_window.png) 110 fill / 38px stretch;
+  transform: translateY(14px) scale(.98); transition: transform .3s; }
+.sk-overlay.open .sk-modal { transform: none; }
+.sk-modal[data-r="legendary"] { filter: drop-shadow(0 0 22px rgba(242,193,78,.45)); }
+.sk-art { position: relative; aspect-ratio: 16 / 9; margin: -6px -6px 0; overflow: hidden; background: #0b0f16; }
+.sk-art img { width: 100%; height: 100%; object-fit: cover; display: block; animation: skzoom 12s ease-out both; }
+.sk-art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(14,17,24,.95) 0%, rgba(14,17,24,0) 34%); pointer-events: none; }
+@keyframes skzoom { from { transform: scale(1.08); } to { transform: scale(1); } }
+.sk-info { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-top: -86px; padding: 0 14px 6px; }
+.sk-info .rar { font: 13px var(--body); letter-spacing: .14em; text-transform: uppercase; }
+.sk-info h3 { margin: 4px 0 4px; font: 40px/1 var(--display); font-weight: 400; color: #fff6e0; text-shadow: 0 2px 0 #000, 0 0 18px rgba(0,0,0,.8); }
+.sk-info p { margin: 0; color: #d7d0c0; font-size: 15px; text-shadow: 0 1px 2px #000; }
+.sk-close { position: absolute; right: 2px; top: 2px; z-index: 3; width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(214,189,143,.4); cursor: pointer; font-size: 24px; line-height: 1; color: var(--cream); background: rgba(6,8,13,.75); }
+@media (prefers-reduced-motion: reduce) { .skin.leg .gcard::before, .skin.leg .gcard::after, .skin.leg .gcard .art > i::before, .skin.leg .gcard .fr, .sk-art img { animation: none; } }
 .skin .nm { margin-top: 10px; font: 17px/1.2 var(--display); color: #fff6e0; }
 .commons .skin .nm { font-size: 15px; }
 .skin .un { margin-top: 2px; font-size: 13px; color: var(--muted); }
@@ -186,8 +222,9 @@ section { position: relative; padding: 72px 0 40px; scroll-margin-top: 72px; }
 .gcard[data-r="legendary"] { --cp: polygon(41.9% 17.2%, 30.7% 18.5%, 24.7% 19.7%, 20.3% 21.0%, 17.8% 22.2%, 15.6% 23.5%, 14.2% 24.7%, 13.2% 26.0%, 12.6% 27.2%, 12.1% 28.5%, 12.1% 29.8%, 11.8% 31.0%, 11.8% 32.3%, 11.8% 33.5%, 11.8% 34.8%, 11.8% 36.0%, 11.8% 37.3%, 11.8% 38.5%, 11.8% 39.8%, 11.8% 41.1%, 11.8% 42.3%, 11.8% 43.6%, 11.8% 44.8%, 12.1% 46.1%, 11.8% 47.3%, 11.8% 48.6%, 11.5% 49.9%, 11.5% 51.1%, 11.8% 52.4%, 11.8% 53.6%, 11.5% 54.9%, 11.5% 56.1%, 11.5% 57.4%, 11.8% 58.6%, 11.8% 59.9%, 12.1% 61.2%, 12.6% 62.4%, 13.7% 63.7%, 15.1% 64.9%, 17.3% 66.2%, 20.5% 67.4%, 23.8% 68.7%, 27.4% 69.9%, 33.4% 71.4%, 66.0% 71.4%, 73.2% 69.9%, 76.4% 68.7%, 80.0% 67.4%, 83.0% 66.2%, 85.2% 64.9%, 86.3% 63.7%, 87.4% 62.4%, 87.9% 61.2%, 88.2% 59.9%, 87.7% 58.6%, 87.7% 57.4%, 87.7% 56.1%, 87.7% 54.9%, 87.7% 53.6%, 87.7% 52.4%, 88.2% 51.1%, 88.5% 49.9%, 88.5% 48.6%, 88.5% 47.3%, 88.5% 46.1%, 88.2% 44.8%, 88.2% 43.6%, 88.2% 42.3%, 88.2% 41.1%, 88.2% 39.8%, 88.2% 38.5%, 88.2% 37.3%, 88.2% 36.0%, 88.2% 34.8%, 88.2% 33.5%, 88.2% 32.3%, 88.2% 31.0%, 87.9% 29.8%, 87.7% 28.5%, 87.4% 27.2%, 86.8% 26.0%, 85.8% 24.7%, 84.4% 23.5%, 81.9% 22.2%, 79.5% 21.0%, 75.1% 19.7%, 69.3% 18.5%, 57.3% 17.2%); }
 .gcard[data-r="epic"] { --rc: rgba(180,107,255,.55); }
 .gcard[data-r="epic"] { --cp: polygon(36.1% 14.2%, 27.9% 15.7%, 21.9% 17.0%, 15.0% 18.4%, 11.5% 19.9%, 9.8% 21.2%, 9.3% 22.7%, 9.0% 24.2%, 9.0% 25.5%, 9.0% 26.9%, 9.0% 28.4%, 9.0% 29.7%, 9.0% 31.2%, 9.3% 32.7%, 9.3% 34.0%, 9.3% 35.4%, 9.3% 36.9%, 8.7% 38.2%, 8.7% 39.7%, 8.7% 41.1%, 8.7% 42.5%, 8.7% 43.9%, 8.7% 45.4%, 8.7% 46.9%, 8.7% 48.2%, 8.7% 49.6%, 8.7% 51.1%, 8.7% 52.4%, 8.7% 53.9%, 8.7% 55.3%, 8.7% 56.7%, 8.7% 58.1%, 8.7% 59.6%, 8.7% 60.9%, 9.0% 62.4%, 9.3% 63.8%, 9.8% 65.2%, 9.8% 66.6%, 10.9% 68.1%, 12.8% 69.4%, 16.1% 70.9%, 22.7% 72.3%, 31.7% 73.6%, 46.2% 75.3%, 55.7% 75.3%, 68.6% 73.6%, 78.7% 72.3%, 88.5% 70.9%, 86.9% 69.4%, 88.8% 68.1%, 90.7% 66.6%, 91.0% 65.2%, 91.5% 63.8%, 91.8% 62.4%, 91.8% 60.9%, 91.8% 59.6%, 91.5% 58.1%, 91.5% 56.7%, 91.8% 55.3%, 91.8% 53.9%, 91.8% 52.4%, 91.8% 51.1%, 91.8% 49.6%, 91.8% 48.2%, 91.3% 46.9%, 91.0% 45.4%, 91.0% 43.9%, 91.0% 42.5%, 91.5% 41.1%, 91.5% 39.7%, 91.5% 38.2%, 91.5% 36.9%, 91.3% 35.4%, 91.3% 34.0%, 91.3% 32.7%, 91.3% 31.2%, 91.3% 29.7%, 91.3% 28.4%, 91.3% 26.9%, 91.3% 25.5%, 91.0% 24.2%, 90.7% 22.7%, 90.4% 21.2%, 89.1% 19.9%, 86.1% 18.4%, 80.3% 17.0%, 73.8% 15.7%, 41.3% 14.2%); }
-.gcard[data-r="common"] { --rc: rgba(195,201,211,.35); }
-.gcard[data-r="common"] { --cp: polygon(36.1% 14.2%, 27.6% 15.7%, 21.0% 17.1%, 14.2% 18.6%, 10.7% 20.1%, 8.5% 21.5%, 7.9% 22.8%, 8.2% 24.3%, 8.2% 25.8%, 8.2% 27.2%, 7.9% 28.7%, 7.9% 30.2%, 7.9% 31.6%, 7.9% 33.1%, 7.9% 34.6%, 7.9% 36.0%, 7.9% 37.5%, 7.9% 38.8%, 7.9% 40.3%, 7.9% 41.7%, 7.9% 43.2%, 7.9% 44.7%, 7.9% 46.1%, 7.9% 47.6%, 7.9% 49.0%, 7.9% 50.5%, 7.9% 52.0%, 7.9% 53.3%, 7.9% 54.8%, 7.9% 56.2%, 7.9% 57.7%, 7.9% 59.2%, 7.9% 60.6%, 7.9% 62.1%, 7.9% 63.5%, 8.2% 65.0%, 8.7% 66.5%, 9.6% 67.9%, 10.7% 69.3%, 13.4% 70.7%, 17.8% 72.2%, 25.7% 73.6%, 36.6% 75.1%, 48.1% 76.7%, 49.2% 76.7%, 61.5% 75.1%, 75.7% 73.6%, 81.7% 72.2%, 85.2% 70.7%, 87.7% 69.3%, 89.3% 67.9%, 90.4% 66.5%, 91.0% 65.0%, 91.5% 63.5%, 91.5% 62.1%, 91.8% 60.6%, 91.8% 59.2%, 91.8% 57.7%, 91.8% 56.2%, 91.8% 54.8%, 91.5% 53.3%, 91.5% 52.0%, 91.5% 50.5%, 92.3% 49.0%, 92.3% 47.6%, 91.8% 46.1%, 91.5% 44.7%, 91.5% 43.2%, 91.3% 41.7%, 91.3% 40.3%, 91.3% 38.8%, 91.3% 37.5%, 91.3% 36.0%, 91.0% 34.6%, 91.0% 33.1%, 91.0% 31.6%, 91.0% 30.2%, 91.0% 28.7%, 91.0% 27.2%, 91.0% 25.8%, 91.0% 24.3%, 90.7% 22.8%, 90.2% 21.5%, 90.2% 20.1%, 87.7% 18.6%, 82.5% 17.1%, 76.8% 15.7%, 39.9% 14.2%); }
+/* обычная рамка — богаче, серебро с рунами (нарисована по игровой обычной), окно чуть шире */
+.gcard[data-r="common"] { --rc: rgba(195,201,211,.35); --in: 14% 9.5% 23% 9%; }
+.gcard[data-r="common"] { --cp: polygon(36.6% 15.1%, 26.5% 16.5%, 19.9% 17.9%, 14.8% 19.3%, 12.0% 20.8%, 10.7% 22.1%, 10.1% 23.6%, 10.1% 24.9%, 10.1% 26.4%, 9.8% 27.8%, 9.8% 29.1%, 9.8% 30.6%, 9.8% 32.1%, 9.8% 33.4%, 9.8% 34.8%, 9.8% 36.2%, 9.8% 37.6%, 9.8% 39.1%, 9.8% 40.4%, 9.8% 41.9%, 9.8% 43.3%, 9.8% 44.7%, 9.8% 46.1%, 9.8% 47.4%, 9.8% 48.9%, 9.8% 50.4%, 9.8% 51.7%, 9.8% 53.1%, 9.8% 54.6%, 9.8% 55.9%, 9.8% 57.4%, 9.8% 58.7%, 9.8% 60.2%, 9.8% 61.6%, 9.8% 63.0%, 10.1% 64.4%, 10.4% 65.9%, 11.2% 67.2%, 12.6% 68.7%, 14.8% 70.0%, 18.0% 71.4%, 24.6% 72.9%, 34.7% 74.2%, 48.6% 75.8%, 51.4% 75.8%, 65.3% 74.2%, 75.4% 72.9%, 82.0% 71.4%, 85.2% 70.0%, 87.4% 68.7%, 88.8% 67.2%, 89.6% 65.9%, 89.9% 64.4%, 89.9% 63.0%, 89.9% 61.6%, 89.9% 60.2%, 89.9% 58.7%, 89.9% 57.4%, 89.9% 55.9%, 89.9% 54.6%, 89.9% 53.1%, 89.9% 51.7%, 89.9% 50.4%, 89.9% 48.9%, 89.9% 47.4%, 89.9% 46.1%, 89.9% 44.7%, 89.9% 43.3%, 89.9% 41.9%, 89.9% 40.4%, 89.9% 39.1%, 89.9% 37.6%, 89.9% 36.2%, 89.9% 34.8%, 89.9% 33.4%, 89.9% 32.1%, 89.9% 30.6%, 89.9% 29.1%, 89.9% 27.8%, 89.9% 26.4%, 89.9% 24.9%, 89.9% 23.6%, 89.1% 22.1%, 87.7% 20.8%, 85.2% 19.3%, 80.1% 17.9%, 73.5% 16.5%, 63.4% 15.1%); }
 .gcard[data-r="rare"] { --rc: rgba(224,161,106,.45); }
 .gcard[data-r="rare"] { --cp: polygon(38.0% 14.2%, 28.1% 15.7%, 22.4% 17.0%, 15.3% 18.4%, 11.5% 19.9%, 9.3% 21.4%, 8.5% 22.7%, 8.5% 24.2%, 8.5% 25.6%, 8.5% 27.1%, 8.5% 28.4%, 8.5% 29.9%, 8.5% 31.3%, 8.5% 32.8%, 8.5% 34.1%, 8.5% 35.6%, 8.5% 37.0%, 8.5% 38.5%, 8.5% 39.8%, 8.5% 41.3%, 8.5% 42.8%, 8.5% 44.2%, 8.5% 45.5%, 8.2% 47.0%, 8.2% 48.5%, 8.2% 49.9%, 8.2% 51.2%, 8.2% 52.7%, 8.2% 54.2%, 8.2% 55.6%, 8.2% 57.0%, 8.2% 58.4%, 8.2% 59.9%, 8.2% 61.3%, 8.2% 62.7%, 8.5% 64.1%, 8.7% 65.6%, 9.3% 67.1%, 10.1% 68.4%, 12.0% 69.8%, 15.6% 71.3%, 21.3% 72.8%, 30.3% 74.1%, 53.0% 75.7%, 53.3% 75.7%, 69.4% 74.1%, 79.8% 72.8%, 84.4% 71.3%, 87.2% 69.8%, 89.3% 68.4%, 90.4% 67.1%, 91.3% 65.6%, 91.5% 64.1%, 91.8% 62.7%, 91.8% 61.3%, 92.1% 59.9%, 91.5% 58.4%, 91.5% 57.0%, 92.1% 55.6%, 91.8% 54.2%, 91.8% 52.7%, 91.8% 51.2%, 91.8% 49.9%, 91.8% 48.5%, 91.8% 47.0%, 91.5% 45.5%, 91.5% 44.2%, 91.0% 42.8%, 91.5% 41.3%, 91.5% 39.8%, 91.5% 38.5%, 91.5% 37.0%, 91.5% 35.6%, 91.5% 34.1%, 91.3% 32.8%, 91.3% 31.3%, 91.3% 29.9%, 91.3% 28.4%, 91.3% 27.1%, 91.3% 25.6%, 91.3% 24.2%, 91.0% 22.7%, 90.4% 21.4%, 88.8% 19.9%, 85.5% 18.4%, 79.2% 17.0%, 71.9% 15.7%, 38.8% 14.2%); }
 
@@ -290,6 +327,8 @@ footer a:hover { color: var(--cream); }
   .commons .skin:last-child:nth-child(3n+1) { grid-column: 2; }   /* седьмой обычный — по центру последнего ряда */
   .skin .nm { font-size: 15px; } .skin .un { font-size: 12px; } .skin .rar { font-size: 11px; letter-spacing: .06em; }
   .subh { font-size: 22px; }
+  .sk-modal { border-width: 18px; border-image-width: 28px; } .sk-info { margin-top: 10px; padding: 0 4px 4px; } .sk-info h3 { font-size: 30px; } .sk-art::after { display: none; }
+  .skin .see { display: none; }
   footer .wrap { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .stage .pk { animation: none; } html { scroll-behavior: auto; } }
@@ -359,7 +398,7 @@ footer a:hover { color: var(--cream); }
 
       <div class="sub" id="pass-skins">
         <h3 class="subh">Какие скины выпадают из сундуков</h3>
-        <p class="lede">Сундуки со скинами — на 1, 4, 6, 10, 20, 30, 40 и 50 уровнях. В каждом один из 10 скинов сезона.</p>
+        <p class="lede">Сундуки со скинами — на 1, 4, 6, 10, 20, 30, 40 и 50 уровнях. В каждом один из 10 скинов сезона. Нажми на скин, чтобы посмотреть его арт.</p>
         <div class="odds" id="odds"></div>
         <div class="drops"><div class="top3" id="top3"></div><div class="commons" id="commons"></div></div>
         <div class="rules">
@@ -414,6 +453,17 @@ footer a:hover { color: var(--cream); }
     <div class="legal">© 2026 Legions Defense · Макет: цены и тексты черновые</div>
   </div>
 </footer>
+
+<div class="sk-overlay" id="skinView" hidden>
+  <div class="sk-modal" role="dialog" aria-modal="true" aria-labelledby="skName">
+    <button class="sk-close" type="button" aria-label="Закрыть">×</button>
+    <div class="sk-art"><img id="skArt" alt=""></div>
+    <div class="sk-info">
+      <div><div class="rar" id="skRar"></div><h3 id="skName"></h3><p id="skDesc"></p></div>
+      <button class="btn copper lg" data-buy="bundle:bp">Купить премиум</button>
+    </div>
+  </div>
+</div>
 
 <script src="shared/data.js"></script>
 <script>
@@ -496,10 +546,30 @@ const pic = img => `<img src="img/${img}.png" alt="" loading="lazy">`;
 const count = r => POOL.filter(x => x.r === r).length;
 document.getElementById('odds').innerHTML = Object.entries(R).map(([k, v]) =>
   `<span style="--c:${v.color}"><i></i>${v.label} <b>${v.chance}%</b><small>${count(k) === 1 ? '1 скин' : count(k) + ' скинов'}</small></span>`).join('');
-const skin = x => `<article class="skin${x.r === 'legendary' ? ' leg' : ''}">${card(pic(x.img), x.r)}
-  <div class="nm">${x.name}</div>${x.unit !== x.name ? `<div class="un">для юнита ${x.unit}</div>` : ''}<div class="rar" style="color:${R[x.r].color}">${R[x.r].label}</div></article>`;
+const skin = (x, i) => `<article class="skin${x.r === 'legendary' ? ' leg' : ''}" role="button" tabindex="0" data-skin="${POOL.indexOf(x)}" aria-label="${x.name}: показать арт скина">${card(pic(x.img), x.r)}
+  <div class="nm">${x.name}</div>${x.unit !== x.name ? `<div class="un">для юнита ${x.unit}</div>` : ''}<div class="rar" style="color:${R[x.r].color}">${R[x.r].label}</div><div class="see">Смотреть арт</div></article>`;
 document.getElementById('top3').innerHTML = POOL.filter(x => x.r !== 'common').map(skin).join('');
 document.getElementById('commons').innerHTML = POOL.filter(x => x.r === 'common').map(skin).join('');
+
+// клик по скину — большой арт
+const view = document.getElementById('skinView');
+let lastFocus = null;
+function openSkin(i) {
+  const x = POOL[i], r = R[x.r];
+  view.querySelector('.sk-modal').dataset.r = x.r;
+  const art = document.getElementById('skArt'); art.src = `img/${x.img.replace('s1_skin_', 'splash_')}.jpg`; art.alt = `${x.name} — арт скина`;
+  art.style.animation = 'none'; void art.offsetWidth; art.style.animation = '';
+  const rar = document.getElementById('skRar'); rar.textContent = `${r.label} · шанс ${r.chance}%`; rar.style.color = r.color;
+  document.getElementById('skName').textContent = x.name;
+  document.getElementById('skDesc').textContent = `Скин для юнита ${x.unit}. Выпадает из сундуков Battle Pass.`;
+  lastFocus = document.activeElement; view.hidden = false;
+  setTimeout(() => view.classList.add('open'), 16); view.querySelector('.sk-close').focus();
+}
+function closeSkin() { view.classList.remove('open'); setTimeout(() => { view.hidden = true; }, 250); if (lastFocus) lastFocus.focus(); }
+document.getElementById('pass-skins').addEventListener('click', e => { const c = e.target.closest('[data-skin]'); if (c) openSkin(+c.dataset.skin); });
+document.getElementById('pass-skins').addEventListener('keydown', e => { const c = e.target.closest('[data-skin]'); if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openSkin(+c.dataset.skin); } });
+view.addEventListener('click', e => { if (e.target === view || e.target.closest('.sk-close')) closeSkin(); if (e.target.closest('[data-buy]')) closeSkin(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !view.hidden) closeSkin(); });
 
 // награды без своей иконки в игре — простые значки
 const SVG = {
