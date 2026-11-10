@@ -174,6 +174,8 @@ section { position: relative; padding: 72px 0 40px; scroll-margin-top: 72px; }
 /* ---------- окно с артом скина ---------- */
 .sk-overlay { position: fixed; inset: 0; z-index: 110; display: grid; place-items: center; padding: 16px; background: rgba(3,5,9,.86); opacity: 0; transition: opacity .25s; }
 .sk-overlay.open { opacity: 1; }
+/* закрытое окно не должно лежать поверх страницы: display: grid выше перебивал атрибут hidden и слой ловил все клики */
+.sk-overlay[hidden] { display: none; }
 .sk-modal { position: relative; width: min(940px, 100%); max-height: calc(100vh - 32px); overflow: auto; border: 26px solid transparent; border-image: url(img/ld_window.png) 110 fill / 38px stretch;
   transform: translateY(14px) scale(.98); transition: transform .3s; }
 .sk-overlay.open .sk-modal { transform: none; }
