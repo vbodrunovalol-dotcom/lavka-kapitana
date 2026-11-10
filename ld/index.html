@@ -177,7 +177,7 @@ section { position: relative; padding: 72px 0 40px; scroll-margin-top: 72px; }
 .sk-overlay.open { opacity: 1; }
 /* закрытое окно не должно лежать поверх страницы: display: grid выше перебивал атрибут hidden и слой ловил все клики */
 .sk-overlay[hidden] { display: none; }
-.sk-modal { position: relative; width: min(940px, 100%); max-height: calc(100vh - 32px); overflow: auto; border: 26px solid transparent; border-image: url(img/ld_window.png) 110 fill / 38px stretch;
+.sk-modal { position: relative; width: min(940px, 100%); max-height: calc(100vh - 32px); overflow: hidden auto; border: 26px solid transparent; border-image: url(img/ld_window.png) 110 fill / 38px stretch;
   transform: translateY(14px) scale(.98); transition: transform .3s; }
 .sk-overlay.open .sk-modal { transform: none; }
 .sk-modal[data-r="legendary"] { filter: drop-shadow(0 0 22px rgba(242,193,78,.45)); }
@@ -259,7 +259,7 @@ footer a:hover { color: var(--cream); }
 /* ---------- окно покупки ---------- */
 .co-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: rgba(3,5,9,.8); opacity: 0; transition: opacity .2s; }
 .co-overlay.open { opacity: 1; }
-.co-modal { position: relative; width: min(470px, 100%); max-height: calc(100vh - 32px); overflow: auto; padding: 4px 6px 8px; border: 30px solid transparent; border-image: url(img/ld_window.png) 110 fill / 40px stretch; }
+.co-modal { position: relative; width: min(470px, 100%); max-height: calc(100vh - 32px); overflow: hidden auto; padding: 4px 6px 8px; border: 30px solid transparent; border-image: url(img/ld_window.png) 110 fill / 40px stretch; }
 .co-title { margin: 0 0 16px; text-align: center; font: 26px var(--display); text-transform: uppercase; letter-spacing: .06em; color: #fff6e0; }
 .co-close { position: absolute; right: 0; top: -6px; z-index: 2; width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer; font-size: 22px; color: var(--gold); background: rgba(255,255,255,.06); }
 .co-item { display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(255,255,255,.04); border: 1px solid var(--line); margin-bottom: 12px; }
