@@ -205,7 +205,6 @@ section { position: relative; padding: 72px 0 40px; scroll-margin-top: 72px; }
 .lv .gcard .n { position: absolute; left: 0; right: 0; top: 90.2%; transform: translateY(-50%); font: 16px/1 var(--display); color: #fff; text-shadow: 0 1px 0 #000, 0 0 6px #000; padding-top: .2em; }
 .lv .t { margin-top: 8px; font-size: 13px; line-height: 1.3; color: #e2dccd; }
 .lv.gap { flex-basis: 30px; align-self: center; color: var(--muted); font: 22px var(--display); }
-.gcard .art svg { position: absolute; left: 50%; top: 50%; width: 62%; transform: translate(-50%, -50%); filter: drop-shadow(0 0 10px var(--glow, rgba(255,255,255,.3))); }
 .totals { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 .totals span { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 7px; background: #10141c; border: 1px solid var(--line); font: 15px var(--display); color: #fff6e0; }
 .totals img { width: 16px; height: 19px; }
@@ -574,31 +573,24 @@ document.getElementById('pass-skins').addEventListener('keydown', e => { const c
 view.addEventListener('click', e => { if (e.target === view || e.target.closest('.sk-close')) closeSkin(); if (e.target.closest('[data-buy]')) closeSkin(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !view.hidden) closeSkin(); });
 
-// награды без своей иконки в игре — простые значки
-const SVG = {
-  cell: '<svg viewBox="0 0 48 48" fill="none" stroke="#f2e6c4" stroke-width="2"><path d="M6 18h36M6 30h36M18 6v36M30 6v36" opacity=".45"/><rect x="18" y="18" width="12" height="12" fill="rgba(224,161,106,.55)" stroke="#ffd9a8"/></svg>',
-  profile: '<svg viewBox="0 0 48 48" fill="none" stroke="#f2e6c4" stroke-width="2" stroke-linejoin="round"><rect x="5" y="9" width="38" height="30" rx="2"/><path d="m9 35 10-12 7 8 5-5 8 9"/><circle cx="33" cy="17" r="3.5"/></svg>',
-  upgrade: '<svg viewBox="0 0 48 48" fill="none" stroke="#f2e6c4" stroke-width="2.4" stroke-linejoin="round"><path d="M24 8 12 22h7v16h10V22h7z"/><path d="M8 12l2 2M40 12l-2 2M6 30h3M39 30h3" stroke-linecap="round"/></svg>',
-  leader: '<svg viewBox="0 0 48 48" fill="none" stroke="#f2e6c4" stroke-width="2" stroke-linejoin="round"><path d="M17 40h14M24 32v8M14 8h20v8a10 10 0 0 1-20 0z"/><path d="M14 11H8c0 6 3 9 7 9M34 11h6c0 6-3 9-7 9"/></svg>',
-  teleport: '<svg viewBox="0 0 48 48" fill="none" stroke="#f2e6c4" stroke-width="2.2" stroke-linecap="round"><ellipse cx="24" cy="38" rx="14" ry="4"/><path d="M24 8c8 0 12 6 9 12s-12 6-12 0 5-7 9-4" /><path d="M14 30c-3-4-3-9 0-13M34 30c3-4 3-9 0-13" opacity=".6"/></svg>',
-};
+// награды без своей рисованной иконки в игре — нарисованы в стиле игровых (img/ld_rw_*)
 const TRACK = [
   [1, 'Сундук со скином', 'epic', pic('s1_chest_epic')],
   [4, 'Сундук со скином', 'epic', pic('s1_chest_epic')],
-  [5, 'Боевой отчёт', 'epic', pic('s1_battle_report')],
+  [5, 'Боевой отчёт', 'epic', pic('ld_rw_battle_report')],
   [6, 'Сундук со скином', 'epic', pic('s1_chest_epic')],
   [8, 'Аватар сезона 1', 'epic', pic('s1_avatar_01')],
   [10, 'Сундук со скином', 'epic', pic('s1_chest_epic')],
-  [12, 'Подсветка клетки', 'rare', SVG.cell],
-  [15, 'Цвет ника', 'epic', pic('s1_nick_color')],
+  [12, 'Подсветка клетки', 'rare', pic('ld_rw_cell')],
+  [15, 'Цвет ника', 'epic', pic('ld_rw_nick_color')],
   [20, 'Сундук со скином', 'epic', pic('s1_chest_epic')],
-  [22, 'Фон профиля', 'epic', SVG.profile],
+  [22, 'Фон профиля', 'epic', pic('ld_rw_profile')],
   [25, 'Аватар сезона 2', 'epic', pic('s1_avatar_02')],
   [30, 'Сундук со скином', 'epic', pic('s1_chest_epic')],
-  [32, 'Эффект улучшения', 'epic', SVG.upgrade],
-  [35, 'Рамка в таблице лидеров', 'epic', SVG.leader],
+  [32, 'Эффект улучшения', 'epic', pic('ld_rw_upgrade')],
+  [35, 'Рамка в таблице лидеров', 'epic', pic('ld_rw_leader')],
   [40, 'Сундук со скином', 'epic', pic('s1_chest_epic')],
-  [42, 'Эффект переноса', 'legendary', SVG.teleport],
+  [42, 'Эффект переноса', 'legendary', pic('ld_rw_teleport')],
   [45, 'Аватар сезона 3', 'legendary', pic('s1_avatar_03')],
   [50, 'Сундук без обычных скинов', 'legendary', pic('s1_chest_legendary')],
   null,
