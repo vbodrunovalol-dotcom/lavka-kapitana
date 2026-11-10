@@ -90,18 +90,19 @@ section { position: relative; padding: 72px 0 40px; scroll-margin-top: 72px; }
 #crystals { background: linear-gradient(rgba(10,13,20,.86), rgba(10,13,20,.94)), url(img/ld_stone.jpg) 50% 50% / cover; }
 .shop { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
 .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.tile { position: relative; aspect-ratio: 420 / 500; display: flex; flex-direction: column; align-items: center; padding: 0; cursor: pointer; text-align: center;
-  border: solid transparent; border-image: url(img/ld_tile.png) 70 fill / 14% 16.667% stretch; background: none; transition: transform .15s, filter .15s; }
+/* рамка плитки — чистая перерисовка игровой (в игре у спрайта завитки внахлёст и он мыльный), целиком в родных пропорциях 896×1200 */
+.tile { position: relative; aspect-ratio: 896 / 1200; display: flex; flex-direction: column; align-items: center; padding: 0; cursor: pointer; text-align: center;
+  border: 0; background: #11161e url(img/ld_tile.jpg) center / 100% 100% no-repeat; transition: transform .15s, filter .15s; }
 .tile:hover { transform: translateY(-3px); filter: brightness(1.08); }
 .tile.on { filter: drop-shadow(0 0 0 #000) drop-shadow(0 0 14px rgba(242,193,78,.55)); }
 .tile.on::after { content: ''; position: absolute; inset: 2px; border: 2px solid rgba(242,193,78,.9); pointer-events: none; }
-.tile .badge { position: absolute; top: 5%; right: 7%; }
-.tile .ic { flex: 1; width: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 16% 10% 2%; }
-.tile .ic img { max-width: 86%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0,0,0,.55)); }
-.tile[data-wide] .ic img { max-width: 100%; }
+.tile .badge { position: absolute; top: 6%; right: 10%; }
+/* --s: размер набора в плитке (два кристалла чуть меньше, сундук крупнее) */
+.tile .ic { flex: 1; width: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 16% 9% 2%; }
+.tile .ic img { width: calc(84% * var(--s, 1)); max-height: 100%; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0,0,0,.55)); }
 .tile .amt { display: flex; align-items: center; gap: 6px; margin: 2px 0 6px; font: 22px/1 var(--display); color: #fff6e0; }
 .tile .amt img { width: 16px; height: 19px; }
-.tile .btn { width: 78%; margin-bottom: 9%; }
+.tile .btn { width: 74%; margin-bottom: 10%; }
 
 .detail { position: sticky; top: 92px; padding: 6px 8px 10px; text-align: center; border: 34px solid transparent; border-image: url(img/ld_window.png) 110 fill / 44px stretch; filter: drop-shadow(0 14px 22px rgba(0,0,0,.55)); }
 .detail .k { font: 14px var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
@@ -111,8 +112,8 @@ section { position: relative; padding: 72px 0 40px; scroll-margin-top: 72px; }
 .detail hr { border: 0; height: 1px; margin: 16px 10% 0; background: linear-gradient(90deg, transparent, rgba(214,189,143,.45), transparent); }
 .stage { position: relative; height: 290px; margin: 6px -10px 0; }
 .stage .ped { position: absolute; left: 50%; bottom: 0; width: 92%; transform: translateX(-50%); }
-.stage .pk { position: absolute; left: 50%; bottom: 62px; width: 200px; transform: translateX(-50%); filter: drop-shadow(0 12px 14px rgba(0,0,0,.6)); animation: float 4s ease-in-out infinite; }
-.stage .pk.wide { width: 250px; bottom: 50px; }
+.stage .pk { position: absolute; left: 50%; bottom: 62px; width: calc(200px * var(--s, 1)); transform: translateX(-50%); filter: drop-shadow(0 12px 14px rgba(0,0,0,.6)); animation: float 4s ease-in-out infinite; }
+.stage .pk.wide { width: calc(232px * var(--s, 1)); bottom: 46px; }
 @keyframes float { 50% { transform: translate(-50%, -8px); } }
 .detail p { margin: 10px 4px 16px; font-size: 14px; color: #cfc8b8; }
 .detail .btn { width: 100%; }
@@ -288,7 +289,7 @@ footer a:hover { color: var(--cream); }
 @media (max-width: 1100px) {
   .menu { display: none; }
   .shop { grid-template-columns: 1fr 320px; }
-  .stage .pk { width: 180px; } .stage .pk.wide { width: 220px; }
+  .stage .pk { width: calc(180px * var(--s, 1)); } .stage .pk.wide { width: calc(200px * var(--s, 1)); }
   .commons { grid-template-columns: repeat(4, 1fr); }
   .perks { grid-template-columns: repeat(2, 1fr); } .perks > div:nth-child(3) { border-left: 0; } .perks > div:nth-child(n+3) { border-top: 1px solid var(--line); }
 }
@@ -323,7 +324,7 @@ footer a:hover { color: var(--cream); }
   .tile .amt { font-size: 19px; }
   .tile .btn { width: 84%; font-size: 15px; min-height: 36px; }
   .detail { display: block; text-align: center; }
-  .detail .stage { height: 236px; } .stage .pk { width: 170px; bottom: 50px; } .stage .pk.wide { width: 210px; bottom: 44px; }
+  .detail .stage { height: 236px; } .stage .pk { width: calc(170px * var(--s, 1)); bottom: 50px; } .stage .pk.wide { width: calc(185px * var(--s, 1)); bottom: 42px; }
   .pass .txt { padding: 26px 20px; }
   .top3 { gap: 8px; } .commons { grid-template-columns: repeat(3, 1fr); gap: 18px 8px; }
   .commons .skin:last-child:nth-child(3n+1) { grid-column: 2; }   /* седьмой обычный — по центру последнего ряда */
@@ -472,12 +473,12 @@ footer a:hover { color: var(--cream); }
 // Официальный магазин: настоящие наборы кристаллов из игры (ShopConfig: 100 / 550 / 1200 / 3900 / 6800 / 15000), цены в рублях — черновые
 SHOP.promo = { code: 'ЛЕГИОН', bonus: 10 };
 SHOP.crystals = [
-  { id: 'p1', name: 'Пара кристаллов',    amount: 100,   bonus: 0,    pct: 0,  price: 99,   img: 'crystal_pack_100' },
+  { id: 'p1', name: 'Пара кристаллов',    amount: 100,   bonus: 0,    pct: 0,  price: 99,   img: 'crystal_pack_100', s: .8 },
   { id: 'p2', name: 'Горсть кристаллов',  amount: 500,   bonus: 50,   pct: 10, price: 449,  img: 'crystal_pack_550' },
   { id: 'p3', name: 'Россыпь кристаллов', amount: 1000,  bonus: 200,  pct: 20, price: 899,  img: 'crystal_pack_1200' },
   { id: 'p4', name: 'Мешок кристаллов',   amount: 3000,  bonus: 900,  pct: 30, price: 2690, img: 'crystal_pack_3900', tag: 'Хит' },
   { id: 'p5', name: 'Кошель кристаллов',  amount: 5000,  bonus: 1800, pct: 36, price: 4490, img: 'crystal_pack_6800' },
-  { id: 'p6', name: 'Сундук кристаллов',  amount: 10000, bonus: 5000, pct: 50, price: 8990, img: 'crystal_pack_15000', tag: 'Выгодно', wide: true },
+  { id: 'p6', name: 'Сундук кристаллов',  amount: 10000, bonus: 5000, pct: 50, price: 8990, img: 'crystal_pack_15000', tag: 'Выгодно', wide: true, s: 1.19 },
 ];
 SHOP.bundles = [
   { id: 'bp', name: 'Премиум Battle Pass', price: 449, items: ['s1_chest_legendary'], lines: ['Сезон 1', 'подписка на месяц'] },
@@ -499,7 +500,7 @@ const tiles = document.getElementById('tiles'), detail = document.getElementById
 tiles.innerHTML = S.crystals.map(p => `
   <div class="tile" role="button" tabindex="0" data-pack="${p.id}" ${p.wide ? 'data-wide' : ''} aria-label="${p.name}: ${num(total(p))} кристаллов">
     ${p.pct ? `<span class="badge">+${p.pct}%</span>` : ''}
-    <div class="ic">${icon(p)}</div>
+    <div class="ic" style="--s:${p.s || 1}">${icon(p)}</div>
     <div class="amt">${num(total(p))}<img src="img/ld_crystal.png" alt=""></div>
     <button class="btn copper sm" data-buy="crystals:${p.id}">${rub(p.price)}</button>
   </div>`).join('');
@@ -512,7 +513,7 @@ function select(id) {
     <h3>${num(total(p))} кристаллов</h3>
     <div class="s">${p.bonus ? `${num(p.amount)} + <b>${num(p.bonus)} в подарок</b>` : 'Разовая покупка'}</div>
     <hr>
-    <div class="stage"><img class="ped" src="img/ld_pedestal.png" alt=""><img class="pk${p.wide ? ' wide' : ''}" src="img/${p.img}.png" alt=""></div>
+    <div class="stage"><img class="ped" src="img/ld_pedestal.png" alt=""><img class="pk${p.wide ? ' wide' : ''}" style="--s:${p.s || 1}" src="img/${p.img}.png" alt=""></div>
     <p>За кристаллы покупаются скины, эмоции и уровни Battle Pass.</p>
     <button class="btn copper lg" data-buy="crystals:${p.id}">Купить за ${rub(p.price)}</button>`;
 }
